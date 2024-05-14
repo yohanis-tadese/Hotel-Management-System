@@ -81,6 +81,19 @@ const updateCompany = async (companyId, formData) => {
   }
 };
 
+const updateCompanyProfile = async (adminId, companyData) => {
+  const requestOptions = {
+    method: "PATCH",
+    body: companyData,
+  };
+
+  const response = await fetch(
+    `${api_url}/api/company/profile/${adminId}`,
+    requestOptions
+  );
+  return response;
+};
+
 // A function to send delete request to delete a company
 const deleteCompany = async (companyId) => {
   const requestOptions = {
@@ -94,13 +107,33 @@ const deleteCompany = async (companyId) => {
   return response;
 };
 
+const changePassword = async (
+  companyId,
+  oldPassword,
+  newPassword,
+  confirmPassword
+) => {
+  const requestOptions = {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ oldPassword, newPassword, confirmPassword }),
+  };
+  const response = await fetch(
+    `${api_url}/api/company/password/${companyId}`,
+    requestOptions
+  );
+  return response;
+};
+
 // Export all the functions
 const companyService = {
   createCompany,
   getAllCompanies,
   getCompany,
   updateCompany,
+  updateCompanyProfile,
   deleteCompany,
+  changePassword,
   getAllCompaniesWithoutPagination,
 };
 

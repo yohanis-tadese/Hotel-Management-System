@@ -14,7 +14,7 @@ const FAQContainer = styled.div`
 const FAQItem = styled.div`
   width: 100%;
   max-width: 700px;
-  background-color: var(--color-grey-200);
+  background-color: var(--color-grey-0);
   padding: 12px;
   margin-bottom: 20px;
   border-radius: 10px;

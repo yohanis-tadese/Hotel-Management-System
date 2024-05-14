@@ -1,7 +1,6 @@
-// Import necessary dependencies
 const { query } = require("../config/db.config");
 const bcrypt = require("bcrypt");
-// const { sendEmail } = require("../sendEmail");
+const { sendEmail } = require("../sendEmail");
 
 // Function to check if the company exists in the database
 async function checkIfCompanyExists(username) {
@@ -35,9 +34,13 @@ async function createCompany(company) {
           industry_sector,
           accepted_student_limit,
           website,
+          photo,
           password
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `;
+
+    const defaultPhotoPath = "default.jpg";
+
     const result = await query(insertCompanySql, [
       company.company_name,
       username,
@@ -47,16 +50,17 @@ async function createCompany(company) {
       company.industry_sector,
       company.accepted_student_limit,
       company.website,
+      defaultPhotoPath,
       hashedPassword,
     ]);
     const companyId = result.insertId;
 
-    // await sendEmail(
-    //   company.company_name,
-    //   company.contact_email,
-    //   username,
-    //   company.password
-    // );
+    await sendEmail(
+      company.company_name,
+      company.contact_email,
+      username,
+      company.password
+    );
 
     return companyId;
   } catch (error) {
@@ -178,6 +182,60 @@ async function updateCompany(companyId, companyData) {
   }
 }
 
+async function updateCompanyProfile(companyId, companyData, photoFilename) {
+  try {
+    const {
+      company_name,
+      phone_number,
+      contact_email,
+      location,
+      industry_sector,
+      website,
+    } = companyData;
+
+    // Check if a photo filename is provided and update the companyData accordingly
+    if (photoFilename) {
+      companyData.photo = photoFilename;
+    }
+
+    const username = `comp.${company_name.toLowerCase()}`;
+
+    // Update the company data including the hashed password and website
+    const updateSql = `
+      UPDATE companies
+      SET company_name = ?,
+          username = ?,
+          phone_number = ?,
+          contact_email = ?,
+          location = ?,
+          industry_sector = ?,
+          website = ?,
+          photo = ?
+      WHERE company_id = ?
+    `;
+
+    // Execute the SQL query
+    const params = [
+      company_name,
+      username,
+      phone_number,
+      contact_email,
+      location,
+      industry_sector,
+      website,
+      companyData.photo,
+      companyId,
+    ];
+
+    const result = await query(updateSql, params);
+
+    // Check if the update was successful
+    return result.affectedRows > 0;
+  } catch (error) {
+    throw new Error(`Error updating company: ${error.message}`);
+  }
+}
+
 // Function to delete an existing company
 async function deleteCompany(companyId) {
   try {
@@ -195,14 +253,75 @@ async function deleteCompany(companyId) {
   }
 }
 
+async function getCompanyPhoto(companyId) {
+  try {
+    // Fetch company data by ID
+    const company = await getCompany(companyId);
+
+    // Return company's photo filename
+    return company.photo;
+  } catch (error) {
+    console.error("Error getting company photo:", error);
+    throw new Error("Failed to get company photo");
+  }
+}
+
+// Function to change the password of an company
+async function changePassword(
+  companyId,
+  oldPassword,
+  newPassword,
+  confirmPassword
+) {
+  try {
+    // Check if the new password matches the confirm password
+    if (newPassword !== confirmPassword) {
+      throw new Error("New password and confirm password do not match");
+    }
+
+    // Retrieve the current password of the admin from the database
+    const sql = "SELECT password FROM companies WHERE company_id = ?";
+    const [company] = await query(sql, [companyId]);
+
+    // Verify if the provided old password matches the current password
+    const isPasswordValid = await bcrypt.compare(oldPassword, company.password);
+    if (!isPasswordValid) {
+      throw new Error("Old password is incorrect");
+    }
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update the company's password in the database
+    const updatePasswordSql = `
+      UPDATE companies
+      SET password = ?
+      WHERE company_id = ?
+    `;
+    const result = await query(updatePasswordSql, [hashedPassword, companyId]);
+
+    // Check if the password was updated successfully
+    return result.affectedRows > 0;
+  } catch (error) {
+    throw new Error("Failed to change password: " + error.message);
+  }
+}
+
 // Export the functions
 module.exports = {
   checkIfCompanyExists,
   createCompany,
+
   getCompany,
-  updateCompany,
-  deleteCompany,
   getAllCompanies,
-  getAllCompaniesWithoutPagination,
+  getCompany,
   getCompanyCount,
+  getAllCompaniesWithoutPagination,
+  getCompanyPhoto,
+
+  updateCompany,
+  updateCompanyProfile,
+  changePassword,
+
+  deleteCompany,
 };

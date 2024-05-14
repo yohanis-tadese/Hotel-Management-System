@@ -16,6 +16,7 @@ const StyledSidebar = styled.aside`
 function Sidebar() {
   return (
     <StyledSidebar>
+      {/* <h2>Placement Protal</h2> */}
       <Logo />
       <MainNav />
     </StyledSidebar>

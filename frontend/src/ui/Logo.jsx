@@ -1,10 +1,10 @@
-import styled from "styled-components";
 import { useDarkMode } from "../context/DarkModeContext";
 import { NavLink } from "react-router-dom";
+import { styled } from "styled-components";
 
 const StyledLogo = styled.div`
   text-align: center;
-  border-bottom: 1px solid red;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2); /* Add box-shadow */
 `;
 
 const Img = styled.img`

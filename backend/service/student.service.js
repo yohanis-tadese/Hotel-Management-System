@@ -134,12 +134,12 @@ async function updateStudentProfile(studentId, studentData, photoFilename) {
       studentId,
     ];
 
-    if (photoFilename === undefined) {
-      params[5] = null;
-    }
+    const filteredParams = params.map((param) =>
+      param === undefined ? null : param
+    );
 
     // Execute the query
-    const result = await query(updateSql, params);
+    const result = await query(updateSql, filteredParams);
 
     // Check if the update was successful
     return result.affectedRows > 0;
@@ -459,6 +459,21 @@ async function deleteAllPlacementResults() {
   }
 }
 
+async function updateStudentStatus(studentId, status) {
+  try {
+    const updateSql = `
+      UPDATE students
+      SET status = ?
+      WHERE student_id = ?
+    `;
+    const result = await query(updateSql, [status, studentId]);
+    return result.affectedRows > 0;
+  } catch (error) {
+    console.error("Error updating student status:", error.message);
+    throw new Error("Failed to update student status");
+  }
+}
+
 // Export the functions
 module.exports = {
   checkIfStudentExists,
@@ -475,6 +490,7 @@ module.exports = {
   updateStudent,
   updateStudentApplyForm,
   updateStudentProfile,
+  updateStudentStatus,
 
   deleteStudent,
   deleteAllPlacementResults,

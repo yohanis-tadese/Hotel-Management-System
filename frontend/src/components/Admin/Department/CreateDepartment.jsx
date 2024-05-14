@@ -33,11 +33,22 @@ const CreateDepartment = () => {
     if (!formData.department_name) {
       newErrors.department_name = "Department name is required";
       valid = false;
+    } else if (!/^[A-Za-z\s]+$/.test(formData.department_name)) {
+      newErrors.department_name =
+        "Department name must contain only letters and spaces";
+      valid = false;
+    } else if (formData.department_name.length < 3) {
+      newErrors.department_name =
+        "Department name must be at least 3 characters long";
+      valid = false;
     }
 
     // Validate phone number
     if (!formData.phone_number) {
       newErrors.phone_number = "Phone number is required";
+      valid = false;
+    } else if (!/^\d{10,12}$/.test(formData.phone_number)) {
+      newErrors.phone_number = "Phone number must be between 10 to 12 digits";
       valid = false;
     }
 
@@ -114,9 +125,35 @@ const CreateDepartment = () => {
 
   const handleChange = (e) => {
     const { id, value } = e.target;
+    let newValue = value;
+
+    // Validate department name (only allow letters and spaces)
+    if (id === "department_name") {
+      newValue = value.replace(/[^A-Za-z\s]/g, "");
+    }
+
+    // Validate phone number (only allow numeric characters)
+    if (id === "phone_number") {
+      // Validate phone number (allow numeric characters and '+')
+      if (id === "phone_number") {
+        // Remove all non-digit characters except '+'
+        newValue = value.replace(/[^\d+]/g, "");
+
+        // Ensure '+' sign is at the start and only once
+        if (newValue.startsWith("+")) {
+          // Remove any additional '+' signs except the first one
+          newValue = "+" + newValue.slice(1).replace(/\+/g, "");
+        } else {
+          // If '+' is not at the start, remove all occurrences of '+'
+          newValue = newValue.replace(/\+/g, "");
+        }
+        newValue = newValue.substring(0, 13);
+      }
+    }
+
     setFormData((prevData) => ({
       ...prevData,
-      [id]: value,
+      [id]: newValue,
     }));
   };
 
@@ -145,7 +182,7 @@ const CreateDepartment = () => {
             </FormRow>
             <FormRow label="Phone Number" error={errors.phone_number}>
               <Input
-                type="number"
+                type="tel"
                 id="phone_number"
                 autoComplete="on"
                 value={formData.phone_number}
@@ -154,7 +191,7 @@ const CreateDepartment = () => {
             </FormRow>
             <FormRow label="Contact Email" error={errors.contact_email}>
               <Input
-                type="text"
+                type="email"
                 id="contact_email"
                 autoComplete="on"
                 value={formData.contact_email}
@@ -174,7 +211,7 @@ const CreateDepartment = () => {
               <Input
                 type="password"
                 id="password"
-                autoComplete="off"
+                autoComplete="new-password"
                 value={formData.password}
                 onChange={handleChange}
               />

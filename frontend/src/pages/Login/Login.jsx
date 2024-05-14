@@ -11,7 +11,7 @@ const LoginLayout = styled.main`
   align-content: center;
   justify-content: center;
   gap: 3.2rem;
-  background-color: var(--color-grey-0);
+  background-color: var(--color-grey-100);
 `;
 
 function Login() {
@@ -20,8 +20,6 @@ function Login() {
       <LoginLayout>
         <Header />
         <br />
-        <Heading as="h4">Log in to your account</Heading>
-
         <LoginForm />
       </LoginLayout>
       <Footer />

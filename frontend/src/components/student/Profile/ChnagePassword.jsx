@@ -131,9 +131,6 @@ function UpdatePassword() {
             style={{
               display: "flex",
               alignItems: "center",
-              background: "#7DC400",
-
-              padding: "2px 20px",
               borderRadius: "7px",
             }}
           >
@@ -143,9 +140,7 @@ function UpdatePassword() {
               onChange={togglePasswordView}
               style={{ marginRight: "10px", cursor: "pointer" }}
             />
-            <span style={{ color: "#fff", fontWeight: "700" }}>
-              Show Password
-            </span>
+            <span>Show Password</span>
           </label>
         </FormRow>
 

@@ -7,6 +7,9 @@ CREATE TABLE IF NOT EXISTS `departments` (
   `contact_email` VARCHAR(255),
   `office_location` VARCHAR(255),
   `password` VARCHAR(255) NOT NULL,
+  `token` VARCHAR(255), 
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+  `entity_type` ENUM('department') DEFAULT 'department',
   PRIMARY KEY (`department_id`),
   UNIQUE KEY (`department_name`),
   INDEX (`department_name`)
@@ -23,12 +26,15 @@ CREATE TABLE IF NOT EXISTS `companies` (
   `industry_sector` VARCHAR(255),
   `accepted_student_limit` INT(11),
   `website` VARCHAR(400),
+  `photo` VARCHAR(255) DEFAULT 'default.jpg', 
   `password` VARCHAR(255) NOT NULL,
+  `token` VARCHAR(255), 
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+  `entity_type` ENUM('companie') DEFAULT 'companie',
   PRIMARY KEY (`company_id`),
   UNIQUE KEY (`company_name`)
 ) ENGINE=InnoDB;
 
--- Students Table
 CREATE TABLE IF NOT EXISTS `students` (
   `student_id` INT(11) NOT NULL AUTO_INCREMENT,
   `first_name` VARCHAR(100) NOT NULL,
@@ -40,9 +46,14 @@ CREATE TABLE IF NOT EXISTS `students` (
   `photo` VARCHAR(255) DEFAULT 'default.jpg', 
   `password` VARCHAR(255) NOT NULL,
   `department_id` INT(11),
+  `token` VARCHAR(255), 
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+  `entity_type` ENUM('student') DEFAULT 'student',
+  `status` ENUM('Not Started', 'In Progress', 'Nearly Completed', 'Almost Finished', 'Completed') DEFAULT 'Not Started',
   PRIMARY KEY (`student_id`),
   FOREIGN KEY (`department_id`) REFERENCES `departments`(`department_id`) ON DELETE CASCADE 
 ) ENGINE=InnoDB;
+
 
 -- Admins Table
 CREATE TABLE IF NOT EXISTS `admins` (
@@ -53,6 +64,9 @@ CREATE TABLE IF NOT EXISTS `admins` (
   `email` VARCHAR(255) NOT NULL,
   `photo` VARCHAR(255) DEFAULT 'default.jpg', 
   `password` VARCHAR(255) NOT NULL,
+  `token` VARCHAR(255), 
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+  `entity_type` ENUM('admin') DEFAULT 'admin',
   PRIMARY KEY (`admin_id`)
 ) ENGINE=InnoDB;
 
@@ -86,8 +100,11 @@ CREATE TABLE IF NOT EXISTS `weights` (
   `weight_gender` INT(11) NOT NULL,
   `weight_preference` INT(11) NOT NULL,
   `weight_grade` INT(11) NOT NULL,
-  PRIMARY KEY (`weight_id`)
+  `admin_id` INT(11), 
+  PRIMARY KEY (`weight_id`),
+  FOREIGN KEY (`admin_id`) REFERENCES `admins`(`admin_id`)
 ) ENGINE=InnoDB;
+
 
 -- Placement Results Table
 CREATE TABLE IF NOT EXISTS `placement_results` (
@@ -144,7 +161,7 @@ VALUES
 -- Insert an admin
 INSERT INTO `admins` (`first_name`, `last_name`, `username`, `email`, `photo`, `password`)
 VALUES 
-  ('Jhon', 'Doe', 'admin.jhon.do', 'admin@example.com', 'default.jpg', '$2b$10$FnNRxXprBvWeyhl4UHiDs./ZaOQg8RVm/ShFg0aqPHe0AqD.I/bO6');
+  ('Jhon', 'Doee', 'admin.jhon.do', 'admin@example.com', 'default.jpg', '$2b$10$FnNRxXprBvWeyhl4UHiDs./ZaOQg8RVm/ShFg0aqPHe0AqD.I/bO6');
 
 
 -- Insert five companies

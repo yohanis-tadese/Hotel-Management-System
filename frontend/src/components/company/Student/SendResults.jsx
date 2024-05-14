@@ -83,15 +83,14 @@ const SendResults = ({ studentId, departmentId, companyId, onClose }) => {
     // Regular expression to allow only letters, underscores, and dollar signs
     const regex = /^[a-zA-Z_$ ]*$/;
 
+    // Extract the maxAllowed value from the maxAllowed prop of the input element
+    const maxAllowed = parseInt(e.target.getAttribute("maxAllowed"));
+
     // Check if the input element is a number type
     if (e.target.type === "number") {
-      // Extract max allowed value from label text
-      const labelValue = parseFloat(e.target.labels[0].innerText.match(/\d+/));
-      const maxAllowedValue = labelValue;
-
       if (
         value === "" ||
-        (parseFloat(value) >= 0 && parseFloat(value) <= maxAllowedValue)
+        (parseFloat(value) >= 0 && parseFloat(value) <= maxAllowed)
       ) {
         setFormData((prevData) => ({
           ...prevData,
@@ -186,6 +185,7 @@ const SendResults = ({ studentId, departmentId, companyId, onClose }) => {
                   name="commitment"
                   value={formData.commitment}
                   onChange={handleChange}
+                  maxAllowed={3}
                 />
               </div>
               <div>
@@ -198,6 +198,7 @@ const SendResults = ({ studentId, departmentId, companyId, onClose }) => {
                   name="courtesy"
                   value={formData.courtesy}
                   onChange={handleChange}
+                  maxAllowed={2}
                 />
               </div>
             </InputContainer>
@@ -213,6 +214,7 @@ const SendResults = ({ studentId, departmentId, companyId, onClose }) => {
                   name="conduct"
                   value={formData.conduct}
                   onChange={handleChange}
+                  maxAllowed={2}
                 />
               </div>
               <div>
@@ -226,6 +228,7 @@ const SendResults = ({ studentId, departmentId, companyId, onClose }) => {
                   name="perseverance"
                   value={formData.perseverance}
                   onChange={handleChange}
+                  maxAllowed={2}
                 />
               </div>
 
@@ -239,6 +242,7 @@ const SendResults = ({ studentId, departmentId, companyId, onClose }) => {
                   name="teamwork"
                   value={formData.teamwork}
                   onChange={handleChange}
+                  maxAllowed={2}
                 />
               </div>
               <div>
@@ -252,6 +256,7 @@ const SendResults = ({ studentId, departmentId, companyId, onClose }) => {
                   name="professional_ethics"
                   value={formData.professional_ethics}
                   onChange={handleChange}
+                  maxAllowed={2}
                 />
               </div>
               <div>
@@ -264,6 +269,7 @@ const SendResults = ({ studentId, departmentId, companyId, onClose }) => {
                   name="creativity"
                   value={formData.creativity}
                   onChange={handleChange}
+                  maxAllowed={2}
                 />
               </div>
             </InputContainer>
@@ -291,6 +297,7 @@ const SendResults = ({ studentId, departmentId, companyId, onClose }) => {
                   name="technical_knowledge"
                   value={formData.technical_knowledge}
                   onChange={handleChange}
+                  maxAllowed={8}
                 />
               </div>
               <div>
@@ -303,6 +310,7 @@ const SendResults = ({ studentId, departmentId, companyId, onClose }) => {
                   name="efficiency"
                   value={formData.efficiency}
                   onChange={handleChange}
+                  maxAllowed={7}
                 />
               </div>
             </InputContainer>
@@ -319,6 +327,7 @@ const SendResults = ({ studentId, departmentId, companyId, onClose }) => {
                   name="professional_comments"
                   value={formData.professional_comments}
                   onChange={handleChange}
+                  maxAllowed={5}
                 />
               </div>
               <div>
@@ -332,6 +341,7 @@ const SendResults = ({ studentId, departmentId, companyId, onClose }) => {
                   name="attendance"
                   value={formData.attendance}
                   onChange={handleChange}
+                  maxAllowed={5}
                 />
               </div>
             </InputContainer>
@@ -415,13 +425,14 @@ const SendResults = ({ studentId, departmentId, companyId, onClose }) => {
                 />
               </div>
               <div>
-                <Label htmlFor="total_hours">Total Working Hours 800</Label>
+                <Label htmlFor="total_hours">Total Working Hours </Label>
                 <Input
                   type="number"
                   id="total_hours"
                   name="total_hours"
                   value={formData.total_hours}
                   onChange={handleChange}
+                  maxAllowed={800}
                 />
               </div>
             </InputContainer>

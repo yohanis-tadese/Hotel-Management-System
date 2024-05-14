@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Button from "../../ui/Button";
 import Input from "../../ui/Input";
 import Form from "../../ui/Form";
@@ -7,6 +7,9 @@ import FormRowVertical from "../../ui/FormRowVertical";
 import loginService from "../../services/login.service";
 import SpinnerMini from "../../ui/SpinnerMini";
 import { BiSolidShow } from "react-icons/bi";
+import { FaUserTie } from "react-icons/fa";
+import { RiLockPasswordLine } from "react-icons/ri";
+import Heading from "../../ui/Heading";
 
 function LoginForm() {
   const navigate = useNavigate();
@@ -131,7 +134,6 @@ function LoginForm() {
             color: "red",
             textAlign: "center",
             marginBottom: "-5px",
-            border: "1px solid red",
           }}
         >
           {loginError}
@@ -142,33 +144,68 @@ function LoginForm() {
           style={{
             color: "#1BA345",
             textAlign: "center",
-            border: "1px solid #1BA345",
             borderRadius: "7px",
           }}
         >
           {loginSuccess}
         </p>
       )}
-      <FormRowVertical label="Username" error={errors.username}>
-        <Input
-          type="text"
-          id="username"
-          autoComplete="username"
-          value={formData.username}
-          onChange={handleChange}
-          placeholder="Enter your username"
-        />
-      </FormRowVertical>
-      <FormRowVertical label="Password" error={errors.password}>
+
+      <br />
+      <Heading style={{ textAlign: "center" }} as="h2">
+        Login to your account
+      </Heading>
+
+      <FormRowVertical label="" error={errors.username}>
         <div style={{ position: "relative" }}>
+          <FaUserTie
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "5px",
+              transform: "translateY(-50%)",
+              fontSize: "16px",
+              cursor: "pointer",
+              color: "#4338CA",
+            }}
+          />
           <Input
-            style={{ width: "100%" }}
+            style={{ width: "100%", paddingLeft: "40px" }}
+            type="text"
+            id="username"
+            autoComplete="username"
+            value={formData.username}
+            onChange={handleChange}
+            placeholder="Username"
+          />
+        </div>
+      </FormRowVertical>
+      <FormRowVertical label="" error={errors.password}>
+        <div style={{ position: "relative" }}>
+          <RiLockPasswordLine
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "5px",
+              transform: "translateY(-50%)",
+              fontSize: "16px",
+              cursor: "pointer",
+              color: "#4338CA",
+              fontWeight: "750",
+            }}
+          />
+
+          <Input
+            style={{
+              width: "100%",
+              paddingLeft: "40px",
+            }}
             type={showPassword ? "text" : "password"}
             id="password"
-            autoComplete="current-password"
+            autoComplete="new-password"
             value={formData.password}
+            placeholder="Password"
             onChange={handleChange}
-            placeholder="Enter your password"
           />
 
           <BiSolidShow
@@ -179,12 +216,17 @@ function LoginForm() {
               transform: "translateY(-50%)",
               fontSize: "22px",
               cursor: "pointer",
-              color: "#7DC400",
             }}
-            onClick={togglePasswordView}
+            onClick={() => {
+              togglePasswordView();
+            }}
           />
         </div>
       </FormRowVertical>
+
+      <p style={{ color: "#FE8402", fontSize: "16px", textAlign: "end" }}>
+        <Link to="/forgot-password">Forgot Password?</Link>
+      </p>
 
       <FormRowVertical>
         <Button type="submit" size="large" disabled={loading}>

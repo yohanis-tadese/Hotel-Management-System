@@ -73,9 +73,6 @@ function HeaderMenu() {
   return (
     <StyledHeaderMenu>
       <WelcomeMessage>Wellcome, {secondName}</WelcomeMessage>
-      <ButtonIcon>
-        <PiUserCircleDuotone />
-      </ButtonIcon>
 
       <DarkModeToggle />
 

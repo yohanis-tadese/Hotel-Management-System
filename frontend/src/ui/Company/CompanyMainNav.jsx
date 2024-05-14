@@ -5,6 +5,7 @@ import {
   HiOutlineCalendar,
   HiOutlineCog,
   HiOutlineHome,
+  HiOutlineUser,
   HiOutlineUsers,
 } from "react-icons/hi2";
 
@@ -67,6 +68,12 @@ function CompanyMainNav() {
           <StyledNavLink to="/company/student">
             <HiOutlineCalendar />
             <span>Student</span>
+          </StyledNavLink>
+        </li>
+        <li>
+          <StyledNavLink to="/company/account">
+            <HiOutlineUser />
+            <span>Profile</span>
           </StyledNavLink>
         </li>
       </NavList>

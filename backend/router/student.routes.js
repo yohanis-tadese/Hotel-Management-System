@@ -30,15 +30,23 @@ router.patch(
   "/api/student/changepassword/:id",
   studentController.changePassword
 );
+
 router.patch(
   "/api/student/update/profile/:id",
   studentController.UplodeStudentPhoto,
   studentController.updateStudentProfile
 );
+
 router.patch("/api/student/update/:id", studentController.updateStudent);
+
 router.patch(
   "/api/student/apply/update/:studentId",
   studentController.updateStudentApplyForm
+);
+
+router.patch(
+  "/api/student/status/:studentId",
+  studentController.updateStudentStatus
 );
 
 module.exports = router;

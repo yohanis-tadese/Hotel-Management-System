@@ -43,9 +43,16 @@ function UpdateProfile() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    let newValue = value;
+
+    // Validate first name and last name (only allow letters and spaces)
+    if (name === "first_name" || name === "last_name") {
+      newValue = value.replace(/[^A-Za-z\s]/g, "");
+    }
+
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value,
+      [name]: newValue,
     }));
   };
 
@@ -62,9 +69,18 @@ function UpdateProfile() {
     const errors = {};
     if (!formData.first_name) {
       errors.first_name = "First Name is required";
+    } else if (!/^[A-Za-z\s]+$/.test(formData.first_name)) {
+      errors.first_name = "First Name must contain only letters and spaces";
+    } else if (formData.first_name.length < 4) {
+      errors.first_name = "First Name must be at least 4 characters long";
     }
+
     if (!formData.last_name) {
       errors.last_name = "Last Name is required";
+    } else if (!/^[A-Za-z\s]+$/.test(formData.last_name)) {
+      errors.last_name = "Last Name must contain only letters and spaces";
+    } else if (formData.last_name.length < 4) {
+      errors.last_name = "Last Name must be at least 4 characters long";
     }
     if (!formData.email) {
       errors.email = "Email is required";

@@ -7,27 +7,24 @@ import styled from "styled-components"; // Import styled-components for custom s
 const AccountContainer = styled.div`
   margin-top: 60px;
   background-color: var(--color-grey-100);
-  padding: 50px;
+  padding: 30px;
 `;
 
 const UpdateSection = styled.div`
-  margin-bottom: 40px;
+  margin-bottom: 20px;
 `;
 
 function StudentAccount() {
   return (
     <AccountContainer>
-      <Heading as="h1">Update Your Account</Heading>
-      <br />
-
       <UpdateSection>
-        <Heading as="h3">Update Your Data</Heading>
+        <Heading as="h2">Update Your Data</Heading>
         <br />
         <UpdateProfile />
       </UpdateSection>
 
       <UpdateSection>
-        <Heading as="h3">Update Password</Heading>
+        <Heading as="h2">Update Password</Heading>
         <br />
         <UpdatePassword />
       </UpdateSection>

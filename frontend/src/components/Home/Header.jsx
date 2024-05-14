@@ -11,7 +11,7 @@ const HeaderContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 10px;
-  background-color: var(--color-grey-100);
+  background-color: var(--color-grey-0);
   box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.1);
   z-index: 1;
 `;

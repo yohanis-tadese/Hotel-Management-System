@@ -1,4 +1,3 @@
-// Import necessary dependencies
 const { query } = require("../config/db.config");
 
 // Function to update criteria in the database

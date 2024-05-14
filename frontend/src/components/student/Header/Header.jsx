@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { NavLink, useNavigate } from "react-router-dom";
 import DarkModeToggle from "../../../ui/DarkModeToggle";
 import { FaSignOutAlt } from "react-icons/fa";
-// import { IoIosNotificationsOutline } from "react-icons/io";
+import { IoIosNotificationsOutline } from "react-icons/io";
 import Heading from "../../../ui/Heading";
 import { useAuth } from "../../../context/AuthContext";
 import loginService from "../../../services/login.service";
@@ -95,16 +95,16 @@ const Avatar = styled.img`
   outline: 2px solid var(--color-grey-100);
 `;
 
-// const NotificationIcon = styled.div`
-//   position: relative;
-//   font-size: 2.8rem;
-//   color: var(--color-primary);
-//   cursor: pointer;
+const NotificationIcon = styled.div`
+  position: relative;
+  font-size: 2.8rem;
+  color: var(--color-primary);
+  cursor: pointer;
 
-//   &:hover {
-//     color: var(--color-primary-light);
-//   }
-// `;
+  &:hover {
+    color: var(--color-primary-light);
+  }
+`;
 
 // Header component
 const Header = () => {
@@ -184,7 +184,7 @@ const Header = () => {
     fetchStudentPhoto();
 
     // Fetch student photo every 30 seconds (30000 milliseconds)
-    const intervalId = setInterval(fetchStudentPhoto, 30000);
+    const intervalId = setInterval(fetchStudentPhoto, 3000);
 
     // Clear interval on component unmount
     return () => clearInterval(intervalId);
@@ -234,7 +234,7 @@ const Header = () => {
           <StyledNavLink to="/student/result">Result</StyledNavLink>
           <StyledNavLink to="/student/profile">Profile</StyledNavLink>
           <DarkModeToggle />
-          {/* <NotificationIcon>
+          <NotificationIcon>
             <IoIosNotificationsOutline />
             <span
               style={{
@@ -255,7 +255,7 @@ const Header = () => {
             >
               4
             </span>
-          </NotificationIcon> */}
+          </NotificationIcon>
 
           <StyledButton onClick={logOut}>
             <FaSignOutAlt /> Logout

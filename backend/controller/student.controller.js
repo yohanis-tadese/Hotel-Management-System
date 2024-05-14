@@ -99,7 +99,7 @@ async function updateStudentProfile(req, res, next) {
     );
 
     if (success) {
-      const students = await studentService.getAllStudents();
+      const students = await studentService.getStudent(studentId);
       return res.status(200).json({
         status: true,
         students,
@@ -411,6 +411,32 @@ async function deleteAllPlacementResults(req, res, next) {
   }
 }
 
+async function updateStudentStatus(req, res, next) {
+  try {
+    const studentId = req.params.studentId;
+    const { status } = req.body;
+
+    // Update student status
+    const success = await studentService.updateStudentStatus(studentId, status);
+
+    if (success) {
+      return res.status(200).json({
+        status: true,
+        message: "Student status updated successfully",
+      });
+    } else {
+      return res.status(404).json({
+        error: "Student not found",
+      });
+    }
+  } catch (error) {
+    console.error("Error updating student status:", error);
+    return res.status(500).json({
+      error: "Internal server error",
+    });
+  }
+}
+
 module.exports = {
   createStudent,
   acceptStudentApplyForm,
@@ -427,6 +453,7 @@ module.exports = {
   UplodeStudentPhoto,
   updateStudentProfile,
   updateStudentApplyForm,
+  updateStudentStatus,
 
   deleteStudent,
   deleteAllPlacementResults,

@@ -76,6 +76,12 @@ function DepMainNav() {
           </StyledNavLink>
         </li>
         <li>
+          <StyledNavLink to="/department/student-status">
+            <HiOutlineCalendar />
+            <span>Status</span>
+          </StyledNavLink>
+        </li>
+        <li>
           <StyledNavLink to="/department/student-grade">
             <HiOutlineCalendar />
             <span>Grade</span>

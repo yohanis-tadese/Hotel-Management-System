@@ -17,12 +17,20 @@ function SignupForm() {
   });
 
   const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    let newValue = value;
+
+    // Validate first name and last name (only allow letters and spaces)
+    if (name === "first_name" || name === "last_name") {
+      newValue = value.replace(/[^A-Za-z\s]/g, "");
+    }
+
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value,
+      [name]: newValue,
     }));
   };
 
@@ -32,10 +40,20 @@ function SignupForm() {
     // Validation logic
     if (!formData.first_name) {
       errors.first_name = "First Name is required";
+    } else if (!/^[A-Za-z\s]+$/.test(formData.first_name)) {
+      errors.first_name = "First Name must contain only letters and spaces";
+    } else if (formData.first_name.length < 4) {
+      errors.first_name = "First Name must be at least 4 characters long";
     }
+
     if (!formData.last_name) {
       errors.last_name = "Last Name is required";
+    } else if (!/^[A-Za-z\s]+$/.test(formData.last_name)) {
+      errors.last_name = "Last Name must contain only letters and spaces";
+    } else if (formData.last_name.length < 4) {
+      errors.last_name = "Last Name must be at least 4 characters long";
     }
+
     if (!formData.email) {
       errors.email = "Email is required";
     }
@@ -64,9 +82,6 @@ function SignupForm() {
           throw new Error(responseData.error || "Failed to create admin");
         }
 
-        // Handle the admin creation response
-        // Modify this part based on your implementation of createAdmin function
-
         setFormData({
           first_name: "",
           last_name: "",
@@ -81,6 +96,10 @@ function SignupForm() {
         });
       }
     }
+  };
+
+  const togglePasswordView = () => {
+    setShowPassword(!showPassword);
   };
 
   return (
@@ -110,7 +129,7 @@ function SignupForm() {
           type="email"
           id="email"
           name="email"
-          autoComplete="off"
+          autoComplete="on"
           value={formData.email}
           onChange={handleChange}
         />
@@ -118,12 +137,32 @@ function SignupForm() {
 
       <FormRow label="Password (min 6 characters)" error={errors?.password}>
         <Input
-          type="password"
+          type={showPassword ? "text" : "password"}
           id="password"
           name="password"
+          autoComplete="new-password"
           value={formData.password}
           onChange={handleChange}
         />
+      </FormRow>
+
+      <FormRow>
+        <label
+          style={{
+            display: "flex",
+            alignItems: "center",
+            padding: "2px",
+            borderRadius: "7px",
+          }}
+        >
+          <input
+            type="checkbox"
+            checked={showPassword}
+            onChange={togglePasswordView}
+            style={{ marginRight: "10px", cursor: "pointer" }}
+          />
+          <span>Show Password</span>
+        </label>
       </FormRow>
 
       <FormRow>

@@ -12,6 +12,7 @@ router.get(
   "/api/all/placement/:departmentId",
   placementController.getAllPlacementResultsByDepartment
 );
+
 router.get(
   "/api/students/send/:companyId",
   placementController.getAllPlacementResultsByCompanyId

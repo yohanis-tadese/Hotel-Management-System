@@ -9,6 +9,9 @@ import { DarkModeProvider } from "./context/DarkModeContext";
 import Unauthorized from "./pages/Unauthorized/Unauthorized";
 import Home from "./pages/Home/Home";
 import FAQ from "./components/Home/FAQ";
+import ForgotPassword from "./components/Login/ForgotPassword";
+import ResetPassword from "./components/Login/ResetPassword";
+import ResetInstruction from "./components/Login/Instruction";
 
 // Admin Pages
 import AdminDashboard from "./pages/Admin/Dashboard";
@@ -39,6 +42,7 @@ import DepartmentStudent from "./pages/departments/Student";
 import Result from "./pages/departments/Result";
 import Grade from "./pages/departments/Grade";
 import PlacementResult from "./components/department/Result/PlacementResult";
+import StudentStatus from "./components/department/Status/StudentStatus";
 import CompanyResult from "./components/department/Result/CompanyResult";
 import EvaluationResult from "./components/department/Result/EvaluationResult";
 
@@ -46,6 +50,7 @@ import EvaluationResult from "./components/department/Result/EvaluationResult";
 import CompanyDashboard from "./pages/company/Dashboard";
 import CompanyStudent from "./pages/company/Students";
 import CompanyAppLayout from "./ui/Company/CompanyAppLayout";
+import CompanyAccount from "./pages/company/CompanyAccount";
 
 function App() {
   return (
@@ -57,6 +62,12 @@ function App() {
 
           <Route path="/" element={<Home />}></Route>
           <Route path="/login" element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/goto-email" element={<ResetInstruction />} />
+          <Route
+            path="/reset-password/:token"
+            element={<ResetPassword />}
+          ></Route>
           <Route path="/FAQ" element={<FAQ />} />
           <Route path="*" element={<PageNotFound />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
@@ -183,14 +194,22 @@ function App() {
                 }
               />
               <Route
-                path="student-grade"
+                path="student-status"
                 element={
                   <PrivateAuthRoute roles={["Department"]}>
-                    <Grade />
+                    <StudentStatus />
                   </PrivateAuthRoute>
                 }
               />
             </Route>
+            <Route
+              path="student-grade"
+              element={
+                <PrivateAuthRoute roles={["Department"]}>
+                  <Grade />
+                </PrivateAuthRoute>
+              }
+            />
           </Route>
 
           {/* ******* student routes ********* */}
@@ -275,6 +294,14 @@ function App() {
               element={
                 <PrivateAuthRoute roles={["Company"]}>
                   <CompanyStudent />
+                </PrivateAuthRoute>
+              }
+            />
+            <Route
+              path="company/account"
+              element={
+                <PrivateAuthRoute roles={["Company"]}>
+                  <CompanyAccount />
                 </PrivateAuthRoute>
               }
             />

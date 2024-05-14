@@ -30,7 +30,6 @@ function FeaturedJobs() {
         setTimeout(async () => {
           const response =
             await companyService.getAllCompaniesWithoutPagination();
-          console.log("gggggggg", response);
 
           if (response.ok) {
             const data = await response.json();
@@ -81,6 +80,9 @@ function FeaturedJobs() {
                 <div className="company-list" key={company.id}>
                   <Company
                     companyName={company.company_name}
+                    companyAvatar={
+                      `http://localhost:8080/images/company/` + company.photo
+                    }
                     industrySector={company.industry_sector}
                     location={company.location}
                     email={company.contact_email}
@@ -103,6 +105,7 @@ function Company({
   location,
   email,
   website,
+  companyAvatar,
   studentLimit,
 }) {
   const redirectToWebsite = () => {
@@ -114,7 +117,10 @@ function Company({
       <div className="the-company">
         <div className="company-details">
           <div className="company-logo">
-            <img src={jobLogo} alt="Company Logo" />
+            <img
+              src={companyAvatar ? companyAvatar : jobLogo}
+              alt="Company Logo"
+            />
           </div>
           <div className="company-info">
             <p className="company-name">

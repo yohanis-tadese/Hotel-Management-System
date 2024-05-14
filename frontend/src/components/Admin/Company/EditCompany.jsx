@@ -53,10 +53,21 @@ const EditCompany = ({
 
     if (!formData.company_name) {
       newErrors.company_name = "Company name is required";
+    } else if (!/^[A-Za-z\s]+$/.test(formData.company_name)) {
+      newErrors.company_name =
+        "Company name must contain only letters and spaces";
+    } else if (formData.company_name.length < 3) {
+      newErrors.company_name =
+        "Company name must be at least 3 characters long";
     }
 
     if (!formData.phone_number) {
       newErrors.phone_number = "Phone number is required";
+    } else if (
+      formData.phone_number &&
+      !/^\+?\d{10,12}$/.test(formData.phone_number)
+    ) {
+      newErrors.phone_number = "Phone number must be between 10 and 12 digits";
     }
 
     if (!formData.contact_email) {
@@ -122,9 +133,37 @@ const EditCompany = ({
 
   const handleChange = (e) => {
     const { id, value } = e.target;
+    let newValue = value;
+
+    // Validate department name (only allow letters and spaces)
+    if (id === "company_name") {
+      newValue = value.replace(/[^A-Za-z\s]/g, "");
+    }
+
+    // Validate department name (only allow letters and spaces)
+    if (id === "company_name") {
+      newValue = value.replace(/[^A-Za-z\s]/g, "");
+    }
+
+    // Validate phone number (allow numeric characters and '+')
+    if (id === "phone_number") {
+      // Remove all non-digit characters except '+'
+      newValue = value.replace(/[^\d+]/g, "");
+
+      // Ensure '+' sign is at the start and only once
+      if (newValue.startsWith("+")) {
+        // Remove any additional '+' signs except the first one
+        newValue = "+" + newValue.slice(1).replace(/\+/g, "");
+      } else {
+        // If '+' is not at the start, remove all occurrences of '+'
+        newValue = newValue.replace(/\+/g, "");
+      }
+      newValue = newValue.substring(0, 13);
+    }
+
     setFormData((prevData) => ({
       ...prevData,
-      [id]: value,
+      [id]: newValue,
     }));
   };
 

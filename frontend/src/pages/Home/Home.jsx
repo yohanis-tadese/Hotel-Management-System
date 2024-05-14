@@ -7,7 +7,7 @@ const StyledAppLayout = styled.div`
   display: grid;
   grid-template-rows: auto 1fr auto; /* Header, Main, Footer */
   min-height: 100vh;
-  background-color: var(--color-grey-50);
+  background-color: var(--color-grey-100);
 `;
 
 const Home = () => {

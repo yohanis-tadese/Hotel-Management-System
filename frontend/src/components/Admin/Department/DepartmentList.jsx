@@ -43,9 +43,8 @@ const SearchInput = styled.input`
   margin-left: 1px;
   padding: 7px;
   border: 1px solid #ccc;
-  background: var(--color-grey-100)
+  background: var(--color-grey-100);
   font-size: 1.4rem;
-
 `;
 
 const ActionsWrapper = styled.div`
@@ -87,6 +86,7 @@ const ConfirmationContainer = styled.div`
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   padding: 15px;
   width: 400px;
+  z-index: 600;
 `;
 
 const ConfirmationMessage = styled.p`

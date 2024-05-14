@@ -11,7 +11,7 @@ const StudentLayout = styled.div`
   align-content: center;
   justify-content: center;
   padding: 30px;
-  gap: 3.2rem;
+  gap: 3rem;
   background-color: var(--color-grey-200);
 `;
 

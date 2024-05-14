@@ -99,6 +99,9 @@ async function getPlacementResult(req, res, next) {
           placement_id: result.placement_id,
           student_id: result.student_id,
           company_id: result.company_id,
+          first_name: result.first_name,
+          last_name: result.last_name,
+          photo: result.photo,
           company_details: companyDetails,
         };
       })

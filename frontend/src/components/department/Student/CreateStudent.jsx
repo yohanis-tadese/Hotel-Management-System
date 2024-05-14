@@ -70,16 +70,20 @@ const CreateStudent = () => {
     let valid = true;
     const newErrors = {};
 
-    // Validate first name
     if (!formData.first_name) {
-      newErrors.first_name = "First name is required";
-      valid = false;
+      newErrors.first_name = "First Name is required";
+    } else if (!/^[A-Za-z\s]+$/.test(formData.first_name)) {
+      newErrors.first_name = "First Name must contain only letters and spaces";
+    } else if (formData.first_name.length < 4) {
+      newErrors.first_name = "First Name must be at least 4 characters long";
     }
 
-    // Validate last name
     if (!formData.last_name) {
-      newErrors.last_name = "Last name is required";
-      valid = false;
+      newErrors.last_name = "Last Name is required";
+    } else if (!/^[A-Za-z\s]+$/.test(formData.last_name)) {
+      newErrors.last_name = "Last Name must contain only letters and spaces";
+    } else if (formData.last_name.length < 4) {
+      newErrors.last_name = "Last Name must be at least 4 characters long";
     }
 
     // Validate phone number
@@ -112,7 +116,7 @@ const CreateStudent = () => {
       valid = false;
     }
 
-    // Validate department ID
+    // Validate GPA
     if (!formData.gpa) {
       newErrors.gpa = "Student GPA is required";
       valid = false;
@@ -179,9 +183,39 @@ const CreateStudent = () => {
 
   const handleChange = (e) => {
     const { id, value } = e.target;
+    let newValue = value;
+
+    // Validate first name and last name (only allow letters and spaces)
+    if (id === "first_name" || id === "last_name") {
+      newValue = value.replace(/[^A-Za-z\s]/g, "");
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        [id]: "",
+      }));
+    }
+
+    // Validate phone number (only allow numeric characters)
+    if (id === "phone_number") {
+      // Validate phone number (allow numeric characters and '+')
+      if (id === "phone_number") {
+        // Remove all non-digit characters except '+'
+        newValue = value.replace(/[^\d+]/g, "");
+
+        // Ensure '+' sign is at the start and only once
+        if (newValue.startsWith("+")) {
+          // Remove any additional '+' signs except the first one
+          newValue = "+" + newValue.slice(1).replace(/\+/g, "");
+        } else {
+          // If '+' is not at the start, remove all occurrences of '+'
+          newValue = newValue.replace(/\+/g, "");
+        }
+        newValue = newValue.substring(0, 13);
+      }
+    }
+
     setFormData((prevData) => ({
       ...prevData,
-      [id]: value,
+      [id]: newValue,
     }));
   };
 
@@ -248,20 +282,20 @@ const CreateStudent = () => {
               <Input
                 type="password"
                 id="password"
-                autoComplete="on"
+                autoComplete="new-password"
                 value={formData.password}
                 onChange={handleChange}
               />
             </FormRow>
-            <FormRow label="Department" error={errors.department_id}>
+            {/* <FormRow label="Department" error={errors.department_id}>
               <Input
                 type="text"
                 id="department_id"
                 value={formData.department_id}
                 onChange={handleChange}
-                disabled // Prevent editing
+                disabled
               />
-            </FormRow>
+            </FormRow> */}
 
             <div
               style={{

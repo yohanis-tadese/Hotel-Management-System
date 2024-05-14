@@ -23,23 +23,23 @@ function UpdateProfile() {
 
   const [errors, setErrors] = useState({});
 
-  useEffect(() => {
-    const fetchStudentData = async () => {
-      try {
-        const response = await studentService.getStudent(userId);
+  const fetchStudentData = async () => {
+    try {
+      const response = await studentService.getStudent(userId);
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch student data");
-        }
-        const responseData = await response.json();
-        const studentData = responseData.students;
-        setFormData(studentData);
-      } catch (error) {
-        console.error("Error fetching student data:", error);
-        toast.error("Error fetching student data", { autoClose: 2000 });
+      if (!response.ok) {
+        throw new Error("Failed to fetch student data");
       }
-    };
+      const responseData = await response.json();
+      const studentData = responseData.students;
+      setFormData(studentData);
+    } catch (error) {
+      console.error("Error fetching student data:", error);
+      toast.error("Error fetching student data", { autoClose: 700 });
+    }
+  };
 
+  useEffect(() => {
     fetchStudentData();
   }, [userId]);
 
@@ -58,7 +58,6 @@ function UpdateProfile() {
       photo: file,
     }));
   };
-  console.log("ffffffff", formData);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -90,7 +89,8 @@ function UpdateProfile() {
           formDataWithFile.append("photo", formData.photo);
         }
 
-        // Update student information
+        console.log("First Name:", formDataWithFile.get("first_name "));
+
         const updateResponse = await studentService.updateStudentProfile(
           userId,
           formDataWithFile
@@ -102,12 +102,12 @@ function UpdateProfile() {
 
         // Show success toast message
         toast.success("Profile updated successfully", {
-          autoClose: 500,
+          autoClose: 700,
         });
       } catch (error) {
         console.error("Error updating student profile:", error);
         // Show error toast message
-        toast.error("Failed to update student profile", { autoClose: 2000 });
+        toast.error("Failed to update student profile", { autoClose: 700 });
       }
     }
   };
@@ -148,7 +148,7 @@ function UpdateProfile() {
         </FormRow>
         <FormRow label="Phone Number" error={errors?.phone_number}>
           <Input
-            type="number"
+            type="text"
             id="phone_number"
             name="phone_number"
             autoComplete="off"
@@ -176,7 +176,8 @@ function UpdateProfile() {
                 first_name: "",
                 last_name: "",
                 contact_email: "",
-                photo: null,
+                phone_number: "",
+                photo: "default.jpg",
               })
             }
           >

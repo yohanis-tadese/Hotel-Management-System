@@ -34,23 +34,36 @@ const TableCell = styled.td`
 `;
 
 const buttonStyle = {
-  padding: "6px 25px",
+  padding: "5px 25px",
   fontSize: "17px",
   borderRadius: "30px",
-  margin: "10px",
-  backgroundColor: "blue",
+  margin: "5px",
   color: "white",
   border: "none",
   cursor: "pointer",
   boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
   transition: "background-color 0.3s ease",
+  backgroundColor: "red",
 };
+
+const disabledButtonStyle = {
+  ...buttonStyle,
+  backgroundColor: "gray",
+  // cursor: "not-allowed",
+};
+
+const Dropdown = styled.select`
+  padding: 4px 12px;
+  font-size: 15px;
+  border-radius: 30px;
+`;
 
 const AcceptedStudentList = () => {
   const [placementResults, setPlacementResults] = useState([]);
   const [selectedStudentId, setSelectedStudentId] = useState(null);
   const [selectedCompanyId, setSelectedCompanyId] = useState(null);
   const [selectedDepartmentId, setSelectedDepartmentId] = useState(null);
+  const [studentStatus, setStudentStatus] = useState({});
   const { userId } = useAuth();
 
   useEffect(() => {
@@ -61,6 +74,13 @@ const AcceptedStudentList = () => {
             userId
           );
           setPlacementResults(data);
+
+          // Initialize studentStatus state with default status for each student
+          const initialStatus = {};
+          data.forEach((result) => {
+            initialStatus[result.student_id] = result.student_status;
+          });
+          setStudentStatus(initialStatus);
         }
       } catch (error) {
         console.error("Error fetching placement results:", error);
@@ -70,10 +90,14 @@ const AcceptedStudentList = () => {
     fetchPlacementResults();
   }, [userId]);
 
+  const handleStatusChange = (studentId, event) => {
+    const newStatus = { ...studentStatus, [studentId]: event.target.value };
+    setStudentStatus(newStatus);
+  };
+
   return (
     <>
       <Heading as="h1">All Accepted Students</Heading>
-
       <PlacementResultsContainer>
         <PlacementResultTable>
           <thead>
@@ -83,7 +107,7 @@ const AcceptedStudentList = () => {
               <TableHeaderCell>Gender</TableHeaderCell>
               <TableHeaderCell>Disability</TableHeaderCell>
               <TableHeaderCell>Department Name</TableHeaderCell>
-              <TableHeaderCell>Company Name</TableHeaderCell>
+              <TableHeaderCell>Status</TableHeaderCell>
               <TableHeaderCell>Final Result</TableHeaderCell>
             </TableRow>
           </thead>
@@ -97,19 +121,33 @@ const AcceptedStudentList = () => {
                 <TableCell>{result.gender}</TableCell>
                 <TableCell>{result.disability === 1 ? "yes" : "no"}</TableCell>
                 <TableCell>{result.department_name}</TableCell>
-                <TableCell style={{ color: "red" }}>
-                  {result.company_name}
+                <TableCell>
+                  <Dropdown
+                    value={result.student_status}
+                    onChange={(e) => handleStatusChange(result.student_id, e)}
+                  >
+                    <option value="Not Started">Not Started</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Nearly Completed">Nearly Completed</option>
+                    <option value="Almost Finished">Almost Finished</option>
+                    <option value="Completed">Completed</option>
+                  </Dropdown>
                 </TableCell>
                 <TableCell>
                   <button
-                    style={buttonStyle}
+                    style={
+                      result.student_status === "Completed"
+                        ? buttonStyle
+                        : disabledButtonStyle
+                    }
                     onClick={() => {
                       setSelectedStudentId(result.student_id);
                       setSelectedCompanyId(result.company_id);
                       setSelectedDepartmentId(result.department_id);
                     }}
+                    disabled={result.student_status !== "Completed"}
                   >
-                    send
+                    Send
                   </button>
                 </TableCell>
               </TableRow>

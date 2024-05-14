@@ -21,7 +21,7 @@ const TableRow = styled.tr`
 // Styled component for table header cell
 const TableHeaderCell = styled.th`
   padding: 10px;
-  text-align: left;
+  text-align: center;
   border-bottom: 1px solid #ddd;
   background-color: var(--color-grey-100);
 `;
@@ -29,6 +29,7 @@ const TableHeaderCell = styled.th`
 // Styled component for table cell
 const TableCell = styled.td`
   padding: 10px;
+  text-align: center;
   border-bottom: 1px solid #ddd;
 `;
 
@@ -64,7 +65,6 @@ const PlacementResult = () => {
             <TableHeaderCell>ID</TableHeaderCell>
             <TableHeaderCell>Student Name</TableHeaderCell>
             <TableHeaderCell>Gender</TableHeaderCell>
-            <TableHeaderCell>Department</TableHeaderCell>
             <TableHeaderCell>Company Number</TableHeaderCell>
             <TableHeaderCell>Company Email</TableHeaderCell>
             <TableHeaderCell>Assigned Company</TableHeaderCell>
@@ -78,12 +78,9 @@ const PlacementResult = () => {
                 {result.student_first_name} {result.student_last_name}
               </TableCell>
               <TableCell>{result.gender}</TableCell>
-              <TableCell>{result.department_name}</TableCell>
               <TableCell>{result.phone_number}</TableCell>
               <TableCell>{result.contact_email}</TableCell>
-              <TableCell style={{ color: "red" }}>
-                {result.company_name}
-              </TableCell>
+              <TableCell>{result.company_name}</TableCell>
             </TableRow>
           ))}
         </tbody>

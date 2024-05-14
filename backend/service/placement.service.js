@@ -10,16 +10,20 @@ async function addPlacementResult(placement) {
   );
 }
 
-// Function to fetch placement results for a specific student
 async function getPlacementResult(studentId) {
   try {
-    // Query the database to fetch placement results for the specified student ID
+    // Query the database to fetch the student's first name, last name, photo, and placement results
     const queryResult = await query(
-      "SELECT * FROM placement_results WHERE student_id = ?",
+      `
+      SELECT s.student_id, s.first_name, s.last_name, s.photo, pr.*
+      FROM students s
+      LEFT JOIN placement_results pr ON s.student_id = pr.student_id
+      WHERE s.student_id = ?
+    `,
       [studentId]
     );
 
-    // Return the fetched placement results
+    // Return the fetched data
     return queryResult;
   } catch (error) {
     // If an error occurs, throw the error to be caught by the controller
@@ -37,6 +41,7 @@ async function getAllPlacementResultsByDepartment(departmentId) {
         pr.placement_id,
         s.first_name AS student_first_name,
         s.last_name AS student_last_name,
+        s.status AS student_status,
         c.company_name,
         c.contact_email,
         c.phone_number,
@@ -95,6 +100,7 @@ async function getAllPlacementResultsByCompanyId(companyId) {
         s.first_name AS student_first_name,
         s.last_name AS student_last_name,
         s.student_id,
+        s.status AS student_status,
         c.company_id,
         c.company_name,
         saf.gender,

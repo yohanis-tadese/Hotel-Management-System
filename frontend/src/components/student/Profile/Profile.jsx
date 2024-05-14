@@ -20,7 +20,7 @@ const ProfileHeader = styled.h2`
   text-align: center;
   margin-bottom: 20px;
   text-transform: capitalize;
-  background-color: var(--color-grey-300);
+  background-color: #b2e3f6;
   width: 100%;
   border-radius: 3px;
   color: white;
@@ -68,9 +68,6 @@ const UserProfile = () => {
         if (response) {
           const student = await response.json();
 
-          console.log("hello", student);
-
-          console.log("hhhhhh", student.photoUrl);
           if (student.students.photo) {
             const adjustedPhotoUrl = student.students.photo.replace(
               "/public",

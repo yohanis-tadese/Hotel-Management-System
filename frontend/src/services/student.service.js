@@ -54,16 +54,17 @@ const updateStudent = async (studentId, formData) => {
 };
 
 // A function to send put request to update a student
-const updateStudentProfile = async (studentId, formData) => {
+const updateStudentProfile = async (studentId, studentData) => {
   const requestOptions = {
     method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(formData),
+    body: studentData,
   };
+
   const response = await fetch(
     `${api_url}/api/student/update/profile/${studentId}`,
     requestOptions
   );
+
   return response;
 };
 

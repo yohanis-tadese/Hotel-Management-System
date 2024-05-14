@@ -56,6 +56,12 @@ function UserAvatar() {
 
   useEffect(() => {
     fetchAdminPhoto();
+
+    // Fetch student photo every 30 seconds (30000 milliseconds)
+    const intervalId = setInterval(fetchAdminPhoto, 3000);
+
+    // Clear interval on component unmount
+    return () => clearInterval(intervalId);
   }, [userId]);
 
   return (
