@@ -8,6 +8,9 @@ router.post("/api/placement", placementController.addPlacementResult);
 // Route to fetch placement results for a specific student
 router.get("/api/placement/:studentId", placementController.getPlacementResult);
 
+// Route to fetch placement results
+router.get("/api/placement", placementController.getAllPlacementResult);
+
 router.get(
   "/api/all/placement/:departmentId",
   placementController.getAllPlacementResultsByDepartment

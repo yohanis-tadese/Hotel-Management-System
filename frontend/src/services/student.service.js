@@ -205,6 +205,32 @@ const deleteAllPlacementResults = async () => {
   return response;
 };
 
+const updateStudentStatus = async (studentId, status) => {
+  try {
+    const requestOptions = {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status }),
+    };
+
+    const response = await fetch(
+      `${api_url}/api/student/status/${studentId}`,
+      requestOptions
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Failed to update student status");
+    }
+
+    const responseData = await response.json();
+    return responseData;
+  } catch (error) {
+    console.error("Error updating student status:", error);
+    throw error;
+  }
+};
+
 // Export all the functions
 const studentService = {
   createStudent,
@@ -222,6 +248,7 @@ const studentService = {
   updateStudentApplyForm,
   updateStudent,
   updateStudentProfile,
+  updateStudentStatus,
   changePassword,
 };
 

@@ -95,17 +95,6 @@ const Avatar = styled.img`
   outline: 2px solid var(--color-grey-100);
 `;
 
-const NotificationIcon = styled.div`
-  position: relative;
-  font-size: 2.8rem;
-  color: var(--color-primary);
-  cursor: pointer;
-
-  &:hover {
-    color: var(--color-primary-light);
-  }
-`;
-
 // Header component
 const Header = () => {
   const navigate = useNavigate();
@@ -234,28 +223,6 @@ const Header = () => {
           <StyledNavLink to="/student/result">Result</StyledNavLink>
           <StyledNavLink to="/student/profile">Profile</StyledNavLink>
           <DarkModeToggle />
-          <NotificationIcon>
-            <IoIosNotificationsOutline />
-            <span
-              style={{
-                position: "absolute",
-                background: "red",
-                width: "15px",
-                height: "15px",
-                fontSize: "12px",
-                fontWeight: "550",
-                right: "1px",
-                top: "6px",
-                color: "#fff",
-                borderRadius: "50%",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              4
-            </span>
-          </NotificationIcon>
 
           <StyledButton onClick={logOut}>
             <FaSignOutAlt /> Logout

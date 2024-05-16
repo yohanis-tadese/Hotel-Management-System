@@ -166,7 +166,7 @@ const EditStudent = ({ studentId, initialData, onCancel, fetchStudents }) => {
   };
 
   const handleChange = (e) => {
-    const { id, value } = e.target;
+    const { id, value, type } = e.target;
     let newValue = value;
 
     // Validate first name and last name (only allow letters and spaces)
@@ -197,14 +197,19 @@ const EditStudent = ({ studentId, initialData, onCancel, fetchStudents }) => {
       }
     }
 
-    if (id === "gpa") {
-      newValue = newValue.replace(/[^\d.]/g, "");
-      newValue = newValue.replace(/^(\d*\.\d{0,2}).*/, "$1");
-
-      // Convert to a number and ensure it's between 0 and 4
-      const gpaValue = parseFloat(newValue);
-      if (isNaN(gpaValue) || gpaValue < 0 || gpaValue > 4) {
-        newValue = "";
+    if (type === "number" && id === "gpa") {
+      const maxAllowed = 4;
+      if (
+        value === "" ||
+        (parseFloat(value) >= 0 && parseFloat(value) <= maxAllowed)
+      ) {
+        setFormData((prevData) => ({
+          ...prevData,
+          [id]: newValue,
+        }));
+        return;
+      } else {
+        return; // Don't update state if the value is out of range
       }
     }
 

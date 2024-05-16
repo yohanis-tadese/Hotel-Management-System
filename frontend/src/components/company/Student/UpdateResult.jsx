@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Modal from "./Modal";
 import { ToastContainer, toast } from "react-toastify";
@@ -33,7 +33,7 @@ const Input = styled.input`
   border-radius: 4px;
   border: 1px solid var(--color-grey-100);
   width: 98%;
-  background: var(--color-grey-50);
+  background: var(--color-grey-100);
 `;
 
 const ButtonContainer = styled.div`
@@ -56,7 +56,8 @@ const CancelButton = styled(Button)`
   background-color: red;
 `;
 
-const SendResults = ({ studentId, departmentId, companyId, onClose }) => {
+const UpdateResults = ({ studentId, onClose }) => {
+  const [studentData, setStudentData] = useState(null);
   const [formData, setFormData] = useState({
     commitment: "",
     courtesy: "",
@@ -76,6 +77,28 @@ const SendResults = ({ studentId, departmentId, companyId, onClose }) => {
     area_of_work: "",
     total_hours: "",
   });
+
+  useEffect(() => {
+    const fetchStudentData = async () => {
+      try {
+        const response = await resultService.getResultsByStudentId(studentId);
+        console.log("response", response[0]);
+
+        if (response) {
+          console.log("hello");
+          const result = response[0];
+          setStudentData(result);
+          setFormData(result);
+        } else {
+          console.error("Failed to fetch student data:", response);
+        }
+      } catch (error) {
+        console.error("Error fetching student data:", error);
+      }
+    };
+
+    fetchStudentData();
+  }, [studentId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -117,33 +140,21 @@ const SendResults = ({ studentId, departmentId, companyId, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Check if all fields are filled
-    const isFormFilled = Object.values(formData).every((value) => value !== "");
-
-    if (!isFormFilled) {
-      toast.error("Please fill all fields before submitting", {
-        autoClose: 1000,
-      });
-      return;
-    }
 
     try {
-      await resultService.saveResults({
-        student_id: studentId,
-        company_id: companyId,
-        department_id: departmentId,
-        ...formData,
-      });
-      toast.success("Form submitted successfully!", { autoClose: 1000 });
+      await resultService.updateResultsByStudentId(studentId, formData);
+      toast.success("Results updated successfully!", { autoClose: 1000 });
       setTimeout(() => {
-        console.log("Results saved successfully", formData);
         onClose();
       }, 2000);
     } catch (error) {
-      console.error("Error saving results:", error);
+      toast.error("Error updating results:", error);
     }
   };
 
+  if (!studentData) {
+    return <div>Loading...</div>;
+  }
   return (
     <Modal onClose={onClose}>
       <ContentContainer>
@@ -433,21 +444,21 @@ const SendResults = ({ studentId, departmentId, companyId, onClose }) => {
                   name="total_hours"
                   value={formData.total_hours}
                   onChange={handleChange}
-              
+                  maxAllowed={800}
                 />
               </div>
             </InputContainer>
           </div>
 
           <ButtonContainer>
-            <Button type="submit">Send</Button>
+            <Button type="submit">Update</Button>
             <CancelButton onClick={onClose}>Cancel</CancelButton>
           </ButtonContainer>
+          <ToastContainer />
         </Form>
-        <ToastContainer />
       </ContentContainer>
     </Modal>
   );
 };
 
-export default SendResults;
+export default UpdateResults;

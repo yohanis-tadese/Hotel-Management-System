@@ -1,12 +1,11 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
-import { NavLink, useNavigate } from "react-router-dom";
-import ButtonIcon from "./../ButtonIcon";
-import { PiUserCircleDuotone } from "react-icons/pi";
+import { useNavigate } from "react-router-dom";
 import DarkModeToggle from "./../DarkModeToggle";
 import { useAuth } from "../../context/AuthContext";
 import loginService from "../../services/login.service";
 import { FaSignOutAlt } from "react-icons/fa";
+import { IoIosNotificationsOutline } from "react-icons/io";
 
 // import Heading from "./Heading";
 
@@ -42,6 +41,18 @@ const StyledButton = styled.button`
   }
 `;
 
+// const NotificationIcon = styled.div`
+//   border-radius: 50%;
+//   position: relative;
+//   font-size: 2.5rem;
+//   color: var(--color-primary);
+//   cursor: pointer;
+
+//   &:hover {
+//     color: var(--color-primary-light);
+//   }
+// `;
+
 function HeaderMenu() {
   const navigate = useNavigate();
   const { setIsLogged, secondName } = useAuth();
@@ -73,9 +84,29 @@ function HeaderMenu() {
   return (
     <StyledHeaderMenu>
       <WelcomeMessage>Wellcome, {secondName}</WelcomeMessage>
-      <ButtonIcon>
-        <PiUserCircleDuotone />
-      </ButtonIcon>
+
+      {/* <NotificationIcon>
+        <IoIosNotificationsOutline />
+        <span
+          style={{
+            position: "absolute",
+            background: "red",
+            width: "15px",
+            height: "15px",
+            fontSize: "10px",
+            fontWeight: "550",
+            right: "1px",
+            top: "6px",
+            color: "#fff",
+            borderRadius: "50%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          3
+        </span>
+      </NotificationIcon> */}
 
       <DarkModeToggle />
 

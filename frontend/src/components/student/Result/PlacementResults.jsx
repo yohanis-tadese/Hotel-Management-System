@@ -11,8 +11,9 @@ import studentService from "../../../services/student.service";
 const Container = styled.div`
   margin: 20px;
   font-size: 20px;
-  background-color: var(--color-grey-0);
-  border-radius: 25px;
+  background-color: var(--color-grey-50);
+  box-shadow: -1px -1px 2px 2px rgba(0, 0, 0, 0.1);
+  border-radius: 13px;
 `;
 // Styled components
 const PlacementContainer = styled.div`
@@ -27,8 +28,9 @@ const Title = styled.h1`
   margin-bottom: 10px;
   padding: 10px;
   text-align: center;
-  text-transform: uppercase;
   background-color: #0273b6;
+  border-top-right-radius: 13px;
+  border-top-left-radius: 13px;
   color: white;
 `;
 
@@ -37,7 +39,7 @@ const Titles = styled.h2`
   margin-bottom: 10px;
   padding: 4px;
   text-align: center;
-  background-color: #d0e7ee;
+  background-color: #7dc400;
 `;
 
 const PlacementList = styled.ul`
@@ -56,12 +58,12 @@ const PlacementCard = styled.div`
   width: 60%;
   margin: 20px auto;
   padding: 5px 10px 30px 3px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  border: 0.2px solid #b7e0f9;
+  border-radius: 10px;
+  box-shadow: -0.2px -0.3px 2px 2px rgba(0, 0, 0, 0.1);
 `;
 
 const LeftSide = styled.div`
-  background-color: var(--color-grey-0);
+  background-color: var(--color-grey-100);
   border-radius: 5px;
   padding: 10px;
   margin-left: 50px;
@@ -248,7 +250,7 @@ const PlacementResults = () => {
                           </DetailValue>
                         </DetailItem>
                         <DetailItem>
-                          <DetailLabel>Contact Email:</DetailLabel>
+                          <DetailLabel>Email:</DetailLabel>
                           <DetailValue>
                             {result?.company_details?.contact_email}
                           </DetailValue>

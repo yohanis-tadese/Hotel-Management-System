@@ -34,10 +34,12 @@ const TableCell = styled.td`
 `;
 
 const TableCellStatus = styled.td`
-  padding: 10px;
+  padding: 4px 10px;
+  width: 150px;
+  text-align: center;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
   color: black;
-  border-radius: 20px;
+  border-radius: 5px;
   background-color: ${({ status }) => {
     switch (status) {
       case "Not Started":
@@ -78,6 +80,23 @@ const StudentStatus = () => {
     fetchPlacementResults();
   }, [userId]);
 
+  const calculateWorkStatusPercentage = (status) => {
+    switch (status) {
+      case "Not Started":
+        return 0;
+      case "In Progress":
+        return 25;
+      case "Nearly Completed":
+        return 50;
+      case "Almost Finished":
+        return 75;
+      case "Completed":
+        return 100;
+      default:
+        return 0;
+    }
+  };
+
   return (
     <>
       <Heading as="h1">Placement Results</Heading>
@@ -87,8 +106,8 @@ const StudentStatus = () => {
           <TableRow>
             <TableHeaderCell>ID</TableHeaderCell>
             <TableHeaderCell>Student Name</TableHeaderCell>
-            <TableHeaderCell>Gender</TableHeaderCell>
             <TableHeaderCell>Assigned Company</TableHeaderCell>
+            <TableHeaderCell>Work Status 100%</TableHeaderCell>
             <TableHeaderCell>Work Status</TableHeaderCell>
           </TableRow>
         </thead>
@@ -99,8 +118,10 @@ const StudentStatus = () => {
               <TableCell>
                 {result.student_first_name} {result.student_last_name}
               </TableCell>
-              <TableCell>{result.gender}</TableCell>
               <TableCell>{result.company_name}</TableCell>
+              <TableCell>
+                {calculateWorkStatusPercentage(result.student_status)}%
+              </TableCell>
               <div style={{ margin: "7px" }}>
                 <TableCellStatus status={result.student_status}>
                   {result.student_status}

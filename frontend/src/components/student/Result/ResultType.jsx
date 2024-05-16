@@ -6,7 +6,6 @@ import Header from "../Header/Header";
 // Styled components
 const PageContainer = styled.div`
   padding-top: 80px;
-  text-transform: uppercase;
   background-color: var(--color-grey-200);
   min-height: 100vh;
 `;

@@ -94,10 +94,34 @@ async function getAllPlacementResultsByCompanyId(companyId) {
   }
 }
 
+// Function to fetch all placement results
+async function getAllPlacementResults() {
+  try {
+    const response = await fetch(`${api_url}/api/placement`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      return data;
+    } else {
+      const errorData = await response.json();
+      throw new Error(
+        errorData.error || "Failed to fetch all placement results"
+      );
+    }
+  } catch (error) {
+    console.error("Error fetching all placement results:", error);
+    throw error;
+  }
+}
+
 // Export all the functions
 const placementService = {
   sendPlacementResults,
   getPlacementResult,
+  getAllPlacementResults,
   getAllPlacementResultsByDepartmentId,
   getAllPlacementResultsByCompanyId,
 };

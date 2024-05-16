@@ -23,10 +23,12 @@ const ForgotLayout = styled.main`
 function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const res = await axios.post(
         "http://localhost:8080/api/forgot-password",
@@ -41,6 +43,7 @@ function ForgotPassword() {
           "Something went wrong. Please try again later."
       );
     }
+    setLoading(false);
   };
 
   return (
@@ -66,8 +69,8 @@ function ForgotPassword() {
             />
           </FormRowVertical>
           <FormRowVertical>
-            <Button type="submit" size="large">
-              Reset Your Password
+            <Button type="submit" size="large" disabled={loading}>
+              {loading ? "Loading..." : "Reset Your Passwordd"}
             </Button>
             <Link style={{ color: "#FE8402", fontSize: "16px" }} to="/login">
               Back to Login?

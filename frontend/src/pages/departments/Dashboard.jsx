@@ -9,42 +9,12 @@ import companyService from "../../services/company.service";
 import studentService from "../../services/student.service";
 import { useAuth } from "../../context/AuthContext";
 import resultService from "./../../services/result.service";
-
-// Styled component for the dashboard container
-const DashboardContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 2rem;
-`;
-
-// Styled component for the individual box
-const Box = styled.div`
-  position: relative;
-  padding: 20px;
-  background-color: var(--color-grey-0);
-  border: 1px solid var(--color-grey-100);
-  border-radius: var(--border-radius-md);
-
-  cursor: pointer;
-  color: var(--color-grey-600);
-
-  &:hover {
-    transform: translateY(-1px);
-  }
-
-  h2 {
-    font-size: 1.5rem;
-    margin-bottom: 10px;
-  }
-
-  h3 {
-    font-size: 2.5rem;
-    margin-bottom: 30px;
-  }
-  p {
-    font-size: 1.2rem;
-  }
-`;
+import Box from "../../ui/Box";
+import ReactApexChart from "react-apexcharts";
+import DashboardContainer from "../../ui/DashboardContainer";
+import Spinner from "../../ui/Spinner";
+import placementService from "../../services/placement.service";
+import Boxs from "../../ui/Boxes";
 
 const StyledLink = styled(Link)`
   position: absolute;
@@ -61,10 +31,18 @@ const IconContainer = styled.div`
   right: 10px;
 `;
 
+const PieChartContainer = styled.div`
+  margin-top: 2rem;
+  width: 300px;
+  margin-bottom: 30px;
+`;
+
 function Dashboard() {
   const [numCompanies, setNumCompanies] = useState(0);
   const [numStudents, setNumStudents] = useState(0);
   const [numSendResults, setNumSendResults] = useState(0);
+  const [studentData, setStudentData] = useState([]);
+  const [loadingStudents, setLoadingStudents] = useState(true);
 
   const { userId } = useAuth();
 
@@ -100,6 +78,50 @@ function Dashboard() {
     fetchData();
   }, [userId]);
 
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const studentResponse =
+          await placementService.getAllPlacementResultsByDepartmentId(userId);
+
+        setStudentData(studentResponse);
+
+        setNumStudents(studentResponse.length);
+      } catch (error) {
+        console.error("Failed to fetch dashboard data:", error);
+      }
+      setLoadingStudents(false);
+    }
+
+    fetchData();
+  }, [userId]);
+
+  const calculateCompanyDistribution = () => {
+    const departmentCounts = {};
+    studentData.forEach((student) => {
+      if (departmentCounts.hasOwnProperty(student.company_name)) {
+        departmentCounts[student.company_name]++;
+      } else {
+        departmentCounts[student.company_name] = 1;
+      }
+    });
+
+    return departmentCounts;
+  };
+
+  const departmentDistributionData = {
+    labels: Object.keys(calculateCompanyDistribution()),
+    series: Object.values(calculateCompanyDistribution()),
+  };
+
+  const pieOptions = {
+    labels: departmentDistributionData.labels,
+    colors: ["#FF6384", "#36A2EB", "#FFCE56", "#66ff33", "#ff33cc", "#9966ff"],
+    legend: {
+      position: "right",
+    },
+  };
+
   return (
     <>
       <Row type="horizontal">
@@ -111,7 +133,7 @@ function Dashboard() {
           <Heading as="h2">Number of Students</Heading>
           <h3>{numStudents}</h3>
           <IconContainer>
-            <FaUserGraduate size={24} color="#0984e3" />{" "}
+            <FaUserGraduate size={24} color="#0984e3" />
           </IconContainer>
           <StyledLink to="/department/student">See detail</StyledLink>
         </Box>
@@ -119,18 +141,53 @@ function Dashboard() {
           <Heading as="h2">Number of Companies</Heading>
           <h3>{numCompanies}</h3>
           <IconContainer>
-            <MdBusiness size={24} color="#0984e3" />{" "}
+            <MdBusiness size={24} color="#0984e3" />
           </IconContainer>
           <StyledLink>Numbers of companys</StyledLink>
         </Box>
+        <Boxs>
+          <Box>
+            <Heading as="h2">Number Of Students Who Sent Results</Heading>
+            <h3>{numSendResults}</h3>
+            <IconContainer>
+              <MdBusiness size={24} color="#0984e3" />
+            </IconContainer>
+            <StyledLink to="/department/student-organizational-results">
+              See detail
+            </StyledLink>
+          </Box>
+          <br />
+          <Box>
+            <Heading as="h2">Number Of Students Who Sent Results</Heading>
+            <h3>{numSendResults}</h3>
+            <IconContainer>
+              <MdBusiness size={24} color="#0984e3" />
+            </IconContainer>
+            <StyledLink to="/department/student-organizational-results">
+              See detail
+            </StyledLink>
+          </Box>
+        </Boxs>
         <Box>
-          <Heading as="h2">Number Of Students Who Sent Results</Heading>
-          <h3>{numSendResults}</h3>
+          <Heading as="h2">Assigned Student Lists</Heading>
           <IconContainer>
-            <MdBusiness size={24} color="#0984e3" />{" "}
+            <FaUserGraduate size={24} color="#0984e3" />
           </IconContainer>
-          <StyledLink to="/department/student-organizational-results">
-            See detail
+          {loadingStudents ? (
+            <Spinner />
+          ) : (
+            <PieChartContainer>
+              <ReactApexChart
+                options={pieOptions}
+                series={departmentDistributionData.series}
+                type="pie"
+                width="380"
+              />
+            </PieChartContainer>
+          )}
+
+          <StyledLink to="/department/student-placement-results">
+            See Detail
           </StyledLink>
         </Box>
       </DashboardContainer>

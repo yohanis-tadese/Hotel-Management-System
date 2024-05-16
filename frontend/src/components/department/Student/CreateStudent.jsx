@@ -182,7 +182,7 @@ const CreateStudent = () => {
   };
 
   const handleChange = (e) => {
-    const { id, value } = e.target;
+    const { id, value, type } = e.target;
     let newValue = value;
 
     // Validate first name and last name (only allow letters and spaces)
@@ -194,25 +194,41 @@ const CreateStudent = () => {
       }));
     }
 
-    // Validate phone number (only allow numeric characters)
+    // Validate phone number (only allow numeric characters and '+')
     if (id === "phone_number") {
-      // Validate phone number (allow numeric characters and '+')
-      if (id === "phone_number") {
-        // Remove all non-digit characters except '+'
-        newValue = value.replace(/[^\d+]/g, "");
+      // Remove all non-digit characters except '+'
+      newValue = value.replace(/[^\d+]/g, "");
 
-        // Ensure '+' sign is at the start and only once
-        if (newValue.startsWith("+")) {
-          // Remove any additional '+' signs except the first one
-          newValue = "+" + newValue.slice(1).replace(/\+/g, "");
-        } else {
-          // If '+' is not at the start, remove all occurrences of '+'
-          newValue = newValue.replace(/\+/g, "");
-        }
-        newValue = newValue.substring(0, 13);
+      // Ensure '+' sign is at the start and only once
+      if (newValue.startsWith("+")) {
+        // Remove any additional '+' signs except the first one
+        newValue = "+" + newValue.slice(1).replace(/\+/g, "");
+      } else {
+        // If '+' is not at the start, remove all occurrences of '+'
+        newValue = newValue.replace(/\+/g, "");
+      }
+
+      // Limit the phone number length to 13 characters
+      newValue = newValue.substring(0, 13);
+    }
+
+    if (type === "number" && id === "gpa") {
+      const maxAllowed = 4;
+      if (
+        value === "" ||
+        (parseFloat(value) >= 0 && parseFloat(value) <= maxAllowed)
+      ) {
+        setFormData((prevData) => ({
+          ...prevData,
+          [id]: newValue,
+        }));
+        return;
+      } else {
+        return; // Don't update state if the value is out of range
       }
     }
 
+    // Set the form data for other types of inputs
     setFormData((prevData) => ({
       ...prevData,
       [id]: newValue,

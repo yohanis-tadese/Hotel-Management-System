@@ -1,7 +1,7 @@
 // Import necessary dependencies
 const { query } = require("../config/db.config");
 const bcrypt = require("bcrypt");
-// const { sendEmail } = require("../sendEmail");
+const { sendEmail } = require("../sendEmail");
 
 // Function to check if the student exists in the database
 async function checkIfStudentExists(username) {
@@ -55,12 +55,12 @@ async function createStudent(student) {
     ]);
     const studentId = result.insertId;
 
-    // await sendEmail(
-    //   student.first_name,
-    //   student.contact_email,
-    //   username,
-    //   student.password
-    // );
+    await sendEmail(
+      student.first_name,
+      student.contact_email,
+      username,
+      student.password
+    );
 
     return studentId;
   } catch (error) {

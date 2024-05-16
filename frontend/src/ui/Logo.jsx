@@ -18,7 +18,7 @@ function Logo() {
   const src = isDarkMode ? "/logo-dark.png" : "/logo-light.png";
 
   return (
-    <NavLink to="/admin/dashboard">
+    <NavLink>
       <StyledLogo>
         <Img src={src} alt="Logo" />
       </StyledLogo>

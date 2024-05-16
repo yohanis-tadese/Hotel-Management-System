@@ -115,13 +115,29 @@ async function getPlacementResult(req, res, next) {
   }
 }
 
-module.exports = {
-  getPlacementResult,
-};
+// Controller function to fetch all placement results
+async function getAllPlacementResult(req, res, next) {
+  try {
+    // Call the service to get all placement results
+    const allPlacementResults = await placementService.getAllPlacementResults();
+
+    // Check if there are placement results
+    if (allPlacementResults.length === 0) {
+      return res.status(404).json({ message: "No placement results found" });
+    }
+
+    // Return the placement results in the response
+    res.status(200).json(allPlacementResults);
+  } catch (error) {
+    console.error("Error fetching placement results:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
 
 module.exports = {
   addPlacementResult,
   getPlacementResult,
+  getAllPlacementResult,
   getAllPlacementResultsByDepartment,
   getAllPlacementResultsByCompanyId,
 };

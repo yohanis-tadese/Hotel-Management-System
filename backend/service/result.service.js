@@ -100,8 +100,82 @@ async function getResultsByStudentId(studentId) {
   return results;
 }
 
+async function updateResultsByStudentId(studentId, updateData) {
+  const {
+    student_id,
+    department_id,
+    company_id,
+    commitment,
+    courtesy,
+    conduct,
+    perseverance,
+    teamwork,
+    professional_ethics,
+    creativity,
+    technical_knowledge,
+    efficiency,
+    professional_comments,
+    attendance,
+    advisor_name,
+    department_assigned,
+    attachment_from_date,
+    attachment_to_date,
+    area_of_work,
+    total_hours,
+  } = updateData;
+
+  await query(
+    `UPDATE student_organizational_result SET 
+    student_id = ?,
+    department_id = ?,
+    company_id = ?,
+    commitment = ?,
+    courtesy = ?,
+    conduct = ?,
+    perseverance = ?,
+    teamwork = ?,
+    professional_ethics = ?,
+    creativity = ?,
+    technical_knowledge = ?,
+    efficiency = ?,
+    professional_comments = ?,
+    attendance = ?,
+    advisor_name = ?,
+    department_assigned = ?,
+    attachment_from_date = ?,
+    attachment_to_date = ?,
+    area_of_work = ?,
+    total_hours = ?
+    WHERE student_id = ?`,
+    [
+      student_id,
+      department_id,
+      company_id,
+      commitment,
+      courtesy,
+      conduct,
+      perseverance,
+      teamwork,
+      professional_ethics,
+      creativity,
+      technical_knowledge,
+      efficiency,
+      professional_comments,
+      attendance,
+      advisor_name,
+      department_assigned,
+      attachment_from_date,
+      attachment_to_date,
+      area_of_work,
+      total_hours,
+      studentId,
+    ]
+  );
+}
+
 module.exports = {
   saveResults,
   getResultsByDepartmentId,
   getResultsByStudentId,
+  updateResultsByStudentId,
 };

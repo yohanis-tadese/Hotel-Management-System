@@ -56,8 +56,28 @@ async function getResultsByStudentId(req, res) {
   }
 }
 
+async function updateResultsByStudentId(req, res) {
+  try {
+    const studentId = req.params.studentId;
+    const updateData = req.body;
+
+    await resultService.updateResultsByStudentId(studentId, updateData);
+
+    return res.status(200).json({
+      status: true,
+      message: "Results updated successfully",
+    });
+  } catch (error) {
+    console.error("Error updating results by student ID:", error);
+    return res.status(500).json({
+      error: "Internal server error",
+    });
+  }
+}
+
 module.exports = {
   sendResults,
   getResultsByDepartmentId,
   getResultsByStudentId,
+  updateResultsByStudentId,
 };

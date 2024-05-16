@@ -1,48 +1,20 @@
 import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import { MdBusiness, MdSchool } from "react-icons/md";
+import { MdBusiness, MdSchool, MdAdminPanelSettings } from "react-icons/md";
 import { FaUserGraduate } from "react-icons/fa";
-import { MdAdminPanelSettings } from "react-icons/md";
 import Heading from "../../ui/Heading";
 import Row from "../../ui/Row";
 import departmentService from "../../services/department.service";
 import companyService from "../../services/company.service";
 import studentService from "../../services/student.service";
 import adminService from "../../services/admin.service";
+import placementService from "../../services/placement.service";
 import Spinner from "../../ui/Spinner";
-
-const DashboardContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(30.33%, 1fr));
-  gap: 4rem;
-`;
-
-const Box = styled.div`
-  position: relative;
-  padding: 20px;
-  background-color: var(--color-grey-0);
-  border: 1px solid var(--color-grey-100);
-  border-radius: var(--border-radius-md);
-  cursor: pointer;
-  color: white;
-
-  &:hover {
-    transform: translateY(-1px);
-  }
-
-  h2 {
-    font-size: 1.6rem;
-    margin-bottom: 10px;
-    color: var(--color-grey-600);
-  }
-
-  h3 {
-    font-size: 2.7rem;
-    margin-bottom: 30px;
-    color: var(--color-grey-600);
-  }
-`;
+import DashboardContainer from "../../ui/DashboardContainer";
+import Box from "../../ui/Box";
+import ReactApexChart from "react-apexcharts";
+import Boxs from "../../ui/Boxes";
 
 const IconContainer = styled.div`
   position: absolute;
@@ -59,18 +31,27 @@ const StyledLink = styled(Link)`
   font-weight: bold;
 `;
 
+const PieChartContainer = styled.div`
+  margin-top: 2rem;
+  width: 300px;
+  margin-bottom: 30px;
+`;
+
 function Dashboard() {
   const [numDepartments, setNumDepartments] = useState(0);
   const [numCompanies, setNumCompanies] = useState(0);
   const [numStudents, setNumStudents] = useState(0);
   const [numAdmins, setNumAdmins] = useState(0);
   const [numApplyStudents, setNumApplyStudents] = useState([]);
+  const [numPlacements, setNumPlacements] = useState(0);
+  const [studentData, setStudentData] = useState([]);
 
   const [loadingDepartments, setLoadingDepartments] = useState(true);
   const [loadingCompanies, setLoadingCompanies] = useState(true);
   const [loadingStudents, setLoadingStudents] = useState(true);
   const [loadingAdmins, setLoadingAdmins] = useState(true);
   const [loadingApplyStudents, setLoadingApplyStudents] = useState(true);
+  const [loadingPlacements, setLoadingPlacements] = useState(true);
 
   useEffect(() => {
     async function fetchData() {
@@ -80,6 +61,7 @@ function Dashboard() {
       const studentResponse = await studentService.getAllStudents();
       const adminResponse = await adminService.getAllAdmins();
       const applyStudentResponse = await studentService.getAllApplyStudents();
+      const placementResponse = await placementService.getAllPlacementResults();
 
       await new Promise((resolve) => setTimeout(resolve, 400));
 
@@ -88,7 +70,8 @@ function Dashboard() {
         companyResponse.ok &&
         studentResponse.ok &&
         adminResponse.ok &&
-        applyStudentResponse
+        applyStudentResponse &&
+        placementResponse
       ) {
         const departmentData = await departmentResponse.json();
         const companyData = await companyResponse.json();
@@ -100,6 +83,7 @@ function Dashboard() {
         setNumStudents(studentData.students.length);
         setNumAdmins(adminData.admins.length);
         setNumApplyStudents(applyStudentResponse.students.length);
+        setNumPlacements(placementResponse.length);
       } else {
         console.error("Failed to fetch dashboard data");
       }
@@ -109,10 +93,54 @@ function Dashboard() {
       setLoadingStudents(false);
       setLoadingAdmins(false);
       setLoadingApplyStudents(false);
+      setLoadingPlacements(false);
     }
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const studentResponse = await placementService.getAllPlacementResults();
+
+        setStudentData(studentResponse);
+
+        setNumStudents(studentResponse.length);
+      } catch (error) {
+        console.error("Failed to fetch dashboard data:", error);
+      }
+      setLoadingStudents(false);
+    }
+
+    fetchData();
+  }, []);
+
+  const calculateCompanyDistribution = () => {
+    const departmentCounts = {};
+    studentData.forEach((student) => {
+      if (departmentCounts.hasOwnProperty(student.company_name)) {
+        departmentCounts[student.company_name]++;
+      } else {
+        departmentCounts[student.company_name] = 1;
+      }
+    });
+
+    return departmentCounts;
+  };
+
+  const departmentDistributionData = {
+    labels: Object.keys(calculateCompanyDistribution()),
+    series: Object.values(calculateCompanyDistribution()),
+  };
+
+  const pieOptions = {
+    labels: departmentDistributionData.labels,
+    colors: ["#FF6384", "#36A2EB", "#FFCE56", "#66ff33", "#ff33cc", "#9966ff"],
+    legend: {
+      position: "right",
+    },
+  };
 
   return (
     <>
@@ -176,19 +204,59 @@ function Dashboard() {
             </>
           )}
         </Box>
+      </DashboardContainer>
+      <DashboardContainer>
+        <Boxs>
+          <Box>
+            <Heading as="h2">Number of Apply Students</Heading>
+            {loadingApplyStudents ? (
+              <Spinner />
+            ) : (
+              <>
+                <h3>{numApplyStudents}</h3>
+                <IconContainer>
+                  <FaUserGraduate size={24} color="#0984e3" />
+                </IconContainer>
+                <StyledLink to="/admin/placement">See detail</StyledLink>
+              </>
+            )}
+          </Box>
+          <br />
+          <br />
+          <Box>
+            <Heading as="h2">Number of Assigned Students</Heading>
+            {loadingPlacements ? (
+              <Spinner />
+            ) : (
+              <>
+                <h3>{numPlacements}</h3>
+                <IconContainer>
+                  <FaUserGraduate size={24} color="#0984e3" />
+                </IconContainer>
+                <StyledLink to="/admin/placement">See detail</StyledLink>
+              </>
+            )}
+          </Box>
+        </Boxs>
         <Box>
-          <Heading as="h2">Number of Apply Students</Heading>
-          {loadingApplyStudents ? (
+          <Heading as="h2">Accepted Students Per Departments</Heading>
+          <IconContainer>
+            <FaUserGraduate size={24} color="#0984e3" />
+          </IconContainer>
+          {loadingStudents ? (
             <Spinner />
           ) : (
-            <>
-              <h3>{numApplyStudents}</h3>
-              <IconContainer>
-                <FaUserGraduate size={24} color="#0984e3" />
-              </IconContainer>
-              <StyledLink to="/admin/placement">See detail</StyledLink>
-            </>
+            <PieChartContainer>
+              <ReactApexChart
+                options={pieOptions}
+                series={departmentDistributionData.series}
+                type="pie"
+                width="380"
+              />
+            </PieChartContainer>
           )}
+
+          <StyledLink to="/admin/placement"> See Detail</StyledLink>
         </Box>
       </DashboardContainer>
     </>

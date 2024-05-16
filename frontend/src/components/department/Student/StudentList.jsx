@@ -41,9 +41,8 @@ const SearchInput = styled.input`
   margin-left: 1px;
   padding: 7px;
   border: 1px solid #ccc;
-  background: var(--color-grey-100)
+  background: var(--color-grey-0);
   font-size: 1.4rem;
-
 `;
 
 const ActionsWrapper = styled.div`
@@ -299,7 +298,6 @@ const StudentList = () => {
                 <TableHeader>Phone Number</TableHeader>
                 <TableHeader>Contact Email</TableHeader>
                 <TableHeader>Gpa</TableHeader>
-                <TableHeader>Department</TableHeader>
                 <TableHeader>Action</TableHeader>
               </TableRow>
             </TableHead>
@@ -312,7 +310,6 @@ const StudentList = () => {
                   <TableCell>{student.phone_number}</TableCell>
                   <TableCell>{student.contact_email}</TableCell>
                   <TableCell>{student.gpa}</TableCell>
-                  <TableCell>{student.department_id}</TableCell>
                   <TableCell>
                     <ActionsWrapper>
                       <IconButton

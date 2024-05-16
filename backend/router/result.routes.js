@@ -16,4 +16,9 @@ router.get(
   sendResultsController.getResultsByStudentId
 );
 
+router.patch(
+  "/api/results/update/:studentId",
+  sendResultsController.updateResultsByStudentId
+);
+
 module.exports = router;
