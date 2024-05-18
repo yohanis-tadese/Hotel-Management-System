@@ -58,7 +58,7 @@ function UpdatePassword() {
       if (response) {
         if (response.status === 200) {
           const data = await response.json();
-          toast.success(data.message, { autoClose: 700 });
+          toast.success(data.message, { autoClose: 1000 });
 
           setTimeout(() => {
             setFormData({
@@ -69,15 +69,15 @@ function UpdatePassword() {
           }, 1000);
         } else {
           const data = await response.json();
-          toast.error(data.message, { autoClose: 700 });
+          toast.error(data.message, { autoClose: 1000 });
         }
       }
     } catch (error) {
       if (error.message === "Old password is incorrect") {
-        toast.error(error.message, { autoClose: 700 });
+        toast.error(error.message, { autoClose: 1000 });
       }
       console.error("Error updating password:", error);
-      toast.error("Failed to update password", { autoClose: 700 });
+      toast.error("Failed to update password", { autoClose: 1000 });
     }
   };
 

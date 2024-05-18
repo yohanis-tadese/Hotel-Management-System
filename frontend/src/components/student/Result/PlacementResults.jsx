@@ -8,17 +8,9 @@ import avatar from "../../../../../backend/public/images/admin/default.jpg";
 import studentService from "../../../services/student.service";
 
 // Styled components
-const Container = styled.div`
-  margin: 20px;
-  font-size: 20px;
-  background-color: var(--color-grey-50);
-  box-shadow: -1px -1px 2px 2px rgba(0, 0, 0, 0.1);
-  border-radius: 13px;
-`;
-// Styled components
 const PlacementContainer = styled.div`
   background-color: var(--color-grey-100);
-  min-height: 100vh;
+  min-height: 85vh;
   padding: 20px;
   margin-top: -5px;
 `;
@@ -64,6 +56,7 @@ const PlacementCard = styled.div`
 
 const LeftSide = styled.div`
   background-color: var(--color-grey-100);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
   border-radius: 5px;
   padding: 10px;
   margin-left: 50px;
@@ -80,7 +73,7 @@ const CompanyDetails = styled.div`
   margin-top: 10px;
   padding: 10px;
   border-radius: 5px;
-  border: 1px solid #b7e0f9;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
 `;
 
 const DetailItem = styled.p`
@@ -102,8 +95,19 @@ const ProfileImage = styled.img`
   height: 140px;
   border-radius: 70%;
   padding: 5px;
-  margin-left: 60px;
+  margin-left: 30px;
+  margin-bottom: 10px;
   border: 2px solid skyblue;
+`;
+
+const ResultTRacker = styled.form`
+  background-color: var(--color-grey-50);
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  width: 80%;
+  margin: 15px auto;
+  text-align: center;
+  padding: 15px;
 `;
 
 // Placement Results Component
@@ -184,25 +188,16 @@ const PlacementResults = () => {
         {loading ? (
           <Spinner />
         ) : (
-          <Container>
-            {placementResults.length === 0 ? (
-              <h2
-                style={{
-                  marginTop: "40px",
-                  background: "var(--color-grey-300)",
-                  textAlign: "center",
-                  padding: "5px",
-                  alignItems: "center",
-                  borderRadius: "6px",
-                }}
-              >
-                We are currently processing placement results. Please check back
-                later for updates.
-              </h2>
+          <>
+            {placementResults[0]?.placement_id === null ? (
+              <ResultTRacker>
+                We are currently processing placement results. may be
+                application deadline has passed please check click apply button.
+              </ResultTRacker>
             ) : (
               <PlacementList>
                 <Title> Wellcome to see your placement Results</Title>
-                {placementResults?.map((result) => (
+                {placementResults.map((result) => (
                   <PlacementItem key={result.placement_id}>
                     <PlacementCard>
                       <LeftSide>
@@ -267,7 +262,7 @@ const PlacementResults = () => {
                 ))}
               </PlacementList>
             )}
-          </Container>
+          </>
         )}
       </PlacementContainer>
     </>

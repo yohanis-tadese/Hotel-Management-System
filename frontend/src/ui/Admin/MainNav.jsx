@@ -1,4 +1,4 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import styled from "styled-components";
 import {
@@ -7,12 +7,14 @@ import {
   HiOutlineHome,
   HiOutlineUser,
 } from "react-icons/hi";
+import { TbReportAnalytics } from "react-icons/tb";
+import { RiAiGenerate } from "react-icons/ri";
 import { MdDashboard } from "react-icons/md";
 
 const NavList = styled.ul`
   display: flex;
   flex-direction: column;
-  gap: 0.1rem;
+  gap: 0.3rem;
 `;
 
 const StyledNavLink = styled(NavLink)`
@@ -28,7 +30,6 @@ const StyledNavLink = styled(NavLink)`
     transition: all 0.3s;
   }
 
-  /* This works because react-router places the active class on the active NavLink */
   &:hover,
   &:active,
   &.active:link,
@@ -54,6 +55,15 @@ const StyledNavLink = styled(NavLink)`
 `;
 
 function MainNav() {
+  const [showCompany, setShowCompany] = useState(false);
+
+  useEffect(() => {
+    const storedShowCompany = localStorage.getItem("showCompany");
+    if (storedShowCompany) {
+      setShowCompany(JSON.parse(storedShowCompany));
+    }
+  }, [showCompany]);
+
   return (
     <nav>
       <NavList>
@@ -66,37 +76,45 @@ function MainNav() {
         <li>
           <StyledNavLink to="/admin/department">
             <HiOutlineCalendar />
-            <span>Department</span>
+            <span>Mange Department</span>
           </StyledNavLink>
         </li>
         <li>
           <StyledNavLink to="/admin/company">
             <HiOutlineHome />
-            <span>Company</span>
+            <span>Mange Company</span>
           </StyledNavLink>
         </li>
         <li>
           <StyledNavLink to="/admin/user">
             <HiOutlineUser />
-            <span>Admin</span>
+            <span>Add New Admin</span>
           </StyledNavLink>
         </li>
         <li>
           <StyledNavLink to="/admin/criteria">
             <HiOutlineCog />
-            <span>Criteria</span>
+            <span>Configure Criteria</span>
           </StyledNavLink>
         </li>
         <li>
           <StyledNavLink to="/admin/placement">
-            <HiOutlineCog />
-            <span>Algorithm</span>
+            <RiAiGenerate />
+            <span>Make Algorithm</span>
           </StyledNavLink>
         </li>
+        {showCompany && (
+          <li>
+            <StyledNavLink to="/admin/report">
+              <TbReportAnalytics />
+              <span>See Report</span>
+            </StyledNavLink>
+          </li>
+        )}
         <li>
           <StyledNavLink to="/admin/account">
             <HiOutlineUser />
-            <span>Profile</span>
+            <span>Update Profile</span>
           </StyledNavLink>
         </li>
       </NavList>

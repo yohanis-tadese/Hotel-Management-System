@@ -22,11 +22,12 @@ async function saveResults(formData) {
     attachment_to_date,
     area_of_work,
     total_hours,
+    comment,
   } = formData;
 
   // Insert the results into the database
   await query(
-    "INSERT INTO student_organizational_result (student_id, department_id, company_id, commitment, courtesy, conduct, perseverance, teamwork, professional_ethics, creativity, technical_knowledge, efficiency, professional_comments, attendance, advisor_name, department_assigned, attachment_from_date, attachment_to_date, area_of_work, total_hours) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+    "INSERT INTO student_organizational_result (student_id, department_id, company_id, commitment, courtesy, conduct, perseverance, teamwork, professional_ethics, creativity, technical_knowledge, efficiency, professional_comments, attendance, advisor_name, department_assigned, attachment_from_date, attachment_to_date, area_of_work, total_hours, comment) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
     [
       student_id,
       department_id,
@@ -48,6 +49,7 @@ async function saveResults(formData) {
       attachment_to_date,
       area_of_work,
       total_hours,
+      comment,
     ]
   );
 }
@@ -122,6 +124,7 @@ async function updateResultsByStudentId(studentId, updateData) {
     attachment_to_date,
     area_of_work,
     total_hours,
+    comment,
   } = updateData;
 
   await query(
@@ -145,7 +148,8 @@ async function updateResultsByStudentId(studentId, updateData) {
     attachment_from_date = ?,
     attachment_to_date = ?,
     area_of_work = ?,
-    total_hours = ?
+    total_hours = ?,
+    comment = ?
     WHERE student_id = ?`,
     [
       student_id,
@@ -168,6 +172,7 @@ async function updateResultsByStudentId(studentId, updateData) {
       attachment_to_date,
       area_of_work,
       total_hours,
+      comment,
       studentId,
     ]
   );

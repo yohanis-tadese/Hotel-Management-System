@@ -67,13 +67,13 @@ function CompanyMainNav() {
         <li>
           <StyledNavLink to="/company/student">
             <HiOutlineCalendar />
-            <span>Student</span>
+            <span>Accepte Student</span>
           </StyledNavLink>
         </li>
         <li>
           <StyledNavLink to="/company/account">
             <HiOutlineUser />
-            <span>Profile</span>
+            <span>Update Profile</span>
           </StyledNavLink>
         </li>
       </NavList>

@@ -18,15 +18,13 @@ const ProfileContainer = styled.div`
 
 const ProfileHeader = styled.h2`
   text-align: center;
-  margin-bottom: 20px;
   text-transform: capitalize;
   background-color: #b2e3f6;
   width: 100%;
   border-radius: 3px;
-  color: white;
   margin-top: -20px;
   padding: 7px;
-  font-size: 40px;
+  font-size: 30px;
 `;
 
 const ProfileInfo = styled.div`
@@ -119,6 +117,16 @@ const UserProfile = () => {
     fetchStudentData();
   }, [userId]);
 
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setRemainingTime((prevRemainingTime) => {
+        return Math.max(0, prevRemainingTime - 1);
+      });
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
   return (
     <ProfileContainer>
       <ProfileHeader
@@ -126,6 +134,7 @@ const UserProfile = () => {
       >
         Wellcome {secondName} to see detail about yourself.
       </ProfileHeader>
+
       {student && (
         <>
           <div

@@ -33,12 +33,16 @@ async function getPlacementResult(studentId) {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     };
-    const response = await fetch(`${api_url}/api/placement/${studentId}`, {
-      requestOptions,
-    });
+    const response = await fetch(
+      `${api_url}/api/placement/${studentId}`,
+      requestOptions
+    );
     if (response.ok) {
       const data = await response.json();
       return data;
+    } else if (response.status === 404) {
+      // Handle case where no valid placement results were found for the student
+      return { message: "Invalid" };
     } else {
       const errorData = await response.json();
       throw new Error(errorData.error || "Failed to fetch placement results");
@@ -101,15 +105,14 @@ async function getAllPlacementResults() {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     });
-
     if (response.ok) {
       const data = await response.json();
       return data;
+    } else if (response.status === 404) {
+      return { message: "Invalid" };
     } else {
       const errorData = await response.json();
-      throw new Error(
-        errorData.error || "Failed to fetch all placement results"
-      );
+      throw new Error(errorData.error || "Failed to fetch placement results");
     }
   } catch (error) {
     console.error("Error fetching all placement results:", error);

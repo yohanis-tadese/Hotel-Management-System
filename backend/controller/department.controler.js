@@ -1,5 +1,31 @@
 // Import necessary dependencies
 const departmentService = require("../service/department.service");
+const multer = require("multer");
+
+const multerStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "public/images/department");
+  },
+  filename: (req, file, cb) => {
+    const ext = file.mimetype.split("/")[1];
+    cb(null, `user-${req.params.id}-${Date.now()}.${ext}`);
+  },
+});
+
+const multerFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith("image")) {
+    cb(null, true);
+  } else {
+    cb(new AppError("Not an image! Please upload only images.", 400), false);
+  }
+};
+
+const upload = multer({
+  storage: multerStorage,
+  fileFilter: multerFilter,
+});
+
+const updateDepartmentPhoto = upload.single("photo");
 
 async function createDepartment(req, res, next) {
   try {
@@ -23,6 +49,7 @@ async function createDepartment(req, res, next) {
       contact_email: req.body.contact_email,
       office_location: req.body.office_location,
       password: req.body.password,
+      photo: req.body.photo,
     });
 
     return res.status(200).json({
@@ -115,6 +142,46 @@ async function updateDepartment(req, res, next) {
   }
 }
 
+async function updateDepartmentProfile(req, res, next) {
+  try {
+    // Extract admin ID from request parameters
+    const departmentId = req.params.id;
+
+    // Check if a file was uploaded
+    let photoFilename = null;
+    if (req.file) {
+      photoFilename = req.file.filename;
+    }
+
+    // Call the service to update the admin
+    const success = await departmentService.updateDepartmentProfile(
+      departmentId,
+      req.body,
+      photoFilename
+    );
+
+    // Check if the admin was successfully updated
+    if (success) {
+      const department = await departmentService.getDepartment(departmentId);
+      return res.status(200).json({
+        status: true,
+        department,
+      });
+    } else {
+      // If update failed, return an error response
+      return res.status(404).json({
+        status: false,
+        error: "Department not found",
+      });
+    }
+  } catch (error) {
+    console.error("Error updating department:", error);
+    return res.status(500).json({
+      error: "Internal server error",
+    });
+  }
+}
+
 async function deleteDepartment(req, res, next) {
   try {
     const departmentId = req.params.id;
@@ -137,6 +204,87 @@ async function deleteDepartment(req, res, next) {
     });
   }
 }
+
+async function getDepartmentPhoto(req, res, next) {
+  try {
+    // Extract admin ID from request parameters
+    const departmentId = req.params.id;
+
+    // Call the service function to get the admin photo filename
+    const photoFilename = await departmentService.getDepartmentPhoto(
+      departmentId
+    );
+
+    // If photo filename is not found or empty, send a 404 response
+    if (!photoFilename) {
+      return res.status(404).json({
+        status: false,
+        error: "Department photo not found",
+      });
+    }
+
+    // Construct the photo URL based on the photo filename
+    const photoUrl = `/public/images/department/${photoFilename}`;
+
+    // Send the photo URL in the response
+    return res.status(200).json({
+      status: true,
+      photoUrl,
+    });
+  } catch (error) {
+    console.error("Error getting Department photo:", error);
+    return res.status(500).json({
+      error: "Internal server error",
+    });
+  }
+}
+
+const changePassword = async (req, res, next) => {
+  try {
+    const departmentId = req.params.id;
+    const { oldPassword, newPassword, confirmPassword } = req.body;
+
+    // Check if the new password matches the confirm password
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({
+        status: "fail",
+        message: "New password and confirm password do not match.",
+      });
+    }
+
+    // Call the service method to change the password
+    const response = await departmentService.changePassword(
+      departmentId,
+      oldPassword,
+      newPassword,
+      confirmPassword
+    );
+
+    if (response) {
+      return res.status(200).json({
+        status: "success",
+        message: "Password updated successfully",
+      });
+    } else {
+      return res.status(400).json({
+        status: "fail",
+        message: "Failed to update password. The old password is incorrect.",
+      });
+    }
+  } catch (error) {
+    if (error.message === "Old password is incorrect") {
+      return res.status(402).json({
+        status: "fail",
+        message: "Failed to update password. The old password is incorrect.",
+      });
+    } else {
+      return res.status(500).json({
+        status: "fail",
+        message: "Failed to update password. Please try again later.",
+      });
+    }
+  }
+};
 
 async function getDepartmentIds(req, res, next) {
   try {
@@ -167,4 +315,8 @@ module.exports = {
   updateDepartment,
   deleteDepartment,
   getDepartmentIds,
+  updateDepartmentProfile,
+  getDepartmentPhoto,
+  changePassword,
+  updateDepartmentPhoto,
 };

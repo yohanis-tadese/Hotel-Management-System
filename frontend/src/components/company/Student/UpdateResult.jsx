@@ -4,6 +4,7 @@ import Modal from "./Modal";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import resultService from "../../../services/result.service";
+import Textarea from "../../../ui/Textarea";
 
 const Form = styled.form`
   display: flex;
@@ -82,10 +83,9 @@ const UpdateResults = ({ studentId, onClose }) => {
     const fetchStudentData = async () => {
       try {
         const response = await resultService.getResultsByStudentId(studentId);
-        console.log("response", response[0]);
+        console.log("Response:", response[0]);
 
-        if (response) {
-          console.log("hello");
+        if (response && response[0]) {
           const result = response[0];
           setStudentData(result);
           setFormData(result);
@@ -103,15 +103,10 @@ const UpdateResults = ({ studentId, onClose }) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // Regular expression to allow only letters, underscores, and dollar signs
     const regex = /^[a-zA-Z_$ ]*$/;
-
-    // Extract the maxAllowed value from the maxAllowed prop of the input element
     const maxAllowed = parseInt(e.target.getAttribute("maxAllowed"));
 
-    // Check if the input element is a number type
     if (e.target.type === "number") {
-      // Check if the value is a valid number within the allowed range
       if (
         value === "" ||
         (parseFloat(value) >= 0 && parseFloat(value) <= maxAllowed)
@@ -122,7 +117,6 @@ const UpdateResults = ({ studentId, onClose }) => {
         }));
       }
     } else if (e.target.type === "text") {
-      // Check if the input value matches the regular expression
       if (regex.test(value)) {
         setFormData((prevData) => ({
           ...prevData,
@@ -130,7 +124,6 @@ const UpdateResults = ({ studentId, onClose }) => {
         }));
       }
     } else {
-      // For non-number and non-text inputs, update form data directly
       setFormData((prevData) => ({
         ...prevData,
         [name]: value,
@@ -155,6 +148,7 @@ const UpdateResults = ({ studentId, onClose }) => {
   if (!studentData) {
     return <div>Loading...</div>;
   }
+
   return (
     <Modal onClose={onClose}>
       <ContentContainer>
@@ -445,6 +439,16 @@ const UpdateResults = ({ studentId, onClose }) => {
                   value={formData.total_hours}
                   onChange={handleChange}
                   maxAllowed={800}
+                />
+              </div>
+              <div>
+                <Label htmlFor="comment">Give Comment About This Student</Label>
+                <Textarea
+                  id="comment"
+                  name="comment"
+                  value={formData.comment}
+                  onChange={handleChange}
+                  maxLength={1000}
                 />
               </div>
             </InputContainer>

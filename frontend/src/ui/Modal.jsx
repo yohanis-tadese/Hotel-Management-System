@@ -1,34 +1,37 @@
 import React from "react";
 import styled from "styled-components";
 
-const ModalBackdrop = styled.div`
+const ModalBackground = styled.div`
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: var(--backdrop-color);
-  backdrop-filter: blur(4px);
+  background-color: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1;
+  z-index: 2000;
 `;
 
-const ModalContainer = styled.div`
-  position: relative;
+const ModalContent = styled.div`
+  background-color: var(--color-grey-0);
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  max-width: 900px;
 `;
 
-const Modal = ({ children, onClick }) => (
-  <ModalBackdrop onClick={onClick}>
-    <ModalContainer onClick={(e) => e.stopPropagation()}>
-      {children}
-    </ModalContainer>
-  </ModalBackdrop>
-);
+const Modal = ({ onClose, children }) => {
+  const handleClose = (e) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
+  return (
+    <ModalBackground onClick={handleClose}>
+      <ModalContent>{children}</ModalContent>
+    </ModalBackground>
+  );
+};
 
 export default Modal;

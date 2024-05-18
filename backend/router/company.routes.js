@@ -7,6 +7,7 @@ router.post("/api/company", companyController.createCompany);
 router.get("/api/company/:id", companyController.getCompany);
 router.get("/api/company", companyController.getAllCompaniesWithoutPagination);
 router.get("/api/companies/page", companyController.getAllCompanies);
+
 router.get("/api/company/:id/photo", companyController.getCompanyPhoto);
 
 router.patch("/api/company/:id", companyController.updateCompany);

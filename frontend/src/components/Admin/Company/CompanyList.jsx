@@ -44,9 +44,8 @@ const SearchInput = styled.input`
   margin-left: 1px;
   padding: 7px;
   border: 1px solid #ccc;
-  background: var(--color-grey-100)
+  background: var(--color-grey-0);
   font-size: 1.4rem;
-
 `;
 
 const ActionsWrapper = styled.div`
@@ -256,7 +255,7 @@ const CompanyList = () => {
         setCompanies(
           companies.filter((company) => company.id !== deletedCompanyId)
         );
-        toast.success("Company deleted successfully.", { autoClose: 700 });
+        toast.success("Company deleted successfully.", { autoClose: 1000 });
         setTimeout(async () => {
           handleUpdateCompanyList();
         }, 1000);

@@ -1,6 +1,5 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import PrivateAuthRoute from "./components/auth/PrivateAuthRoute";
-import { ToastContainer, toast } from "react-toastify";
 
 import GlobalStyles from "./styles/GlobalStyles";
 import Login from "./pages/Login/Login";
@@ -22,6 +21,7 @@ import CriteriaWeight from "./pages/Admin/CriteriaWeight";
 import Generate from "./pages/Admin/Generate";
 import Account from "./pages/Admin/Account";
 import AppLayout from "./ui/Admin/AppLayout";
+import Report from "./components/Admin/Report/Report";
 
 // Student Pages
 import Dashboard from "./pages/student/Dashboard";
@@ -40,11 +40,12 @@ import DepartmentDashboard from "./pages/departments/Dashboard";
 import DepAppLayout from "./ui/Department/DepAppLayout";
 import DepartmentStudent from "./pages/departments/Student";
 import Result from "./pages/departments/Result";
-import Grade from "./pages/departments/Grade";
 import PlacementResult from "./components/department/Result/PlacementResult";
 import StudentStatus from "./components/department/Status/StudentStatus";
 import CompanyResult from "./components/department/Result/CompanyResult";
 import EvaluationResult from "./components/department/Result/EvaluationResult";
+import StudentGrade from "./components/department/Grade/Grade";
+import DeptAccount from "./pages/departments/Account";
 
 // Company Pages
 import CompanyDashboard from "./pages/company/Dashboard";
@@ -125,6 +126,14 @@ function App() {
               }
             />
             <Route
+              path="admin/report"
+              element={
+                <PrivateAuthRoute roles={["Admin"]}>
+                  <Report />
+                </PrivateAuthRoute>
+              }
+            />
+            <Route
               path="admin/account"
               element={
                 <PrivateAuthRoute roles={["Admin"]}>
@@ -201,15 +210,23 @@ function App() {
                   </PrivateAuthRoute>
                 }
               />
+              <Route
+                path="student-grade"
+                element={
+                  <PrivateAuthRoute roles={["Department"]}>
+                    <StudentGrade />
+                  </PrivateAuthRoute>
+                }
+              />
+              <Route
+                path="account"
+                element={
+                  <PrivateAuthRoute roles={["Department"]}>
+                    <DeptAccount />
+                  </PrivateAuthRoute>
+                }
+              />
             </Route>
-            <Route
-              path="student-grade"
-              element={
-                <PrivateAuthRoute roles={["Department"]}>
-                  <Grade />
-                </PrivateAuthRoute>
-              }
-            />
           </Route>
 
           {/* ******* student routes ********* */}

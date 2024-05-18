@@ -40,6 +40,15 @@ function Dashboard() {
   const [loadingStudents, setLoadingStudents] = useState(true);
   const { userId } = useAuth();
 
+  const [showCompany, setShowCompany] = useState(false);
+
+  useEffect(() => {
+    const storedShowCompany = localStorage.getItem("showCompany");
+    if (storedShowCompany) {
+      setShowCompany(JSON.parse(storedShowCompany));
+    }
+  }, [showCompany]);
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -94,45 +103,16 @@ function Dashboard() {
       <Row type="horizontal">
         <Heading as="h1">Company Dashboard</Heading>
       </Row>
-      <DashboardContainer>
-        <Box>
-          <Heading as="h2">Number of Accepted Students</Heading>
-          {loadingStudents ? (
-            <Spinner />
-          ) : (
-            <>
-              <h3>{numStudents}</h3>
-              <IconContainer>
-                <FaUserGraduate size={24} color="#0984e3" />
-              </IconContainer>
-              <StyledLink to="/company/student"> See Detail</StyledLink>
-            </>
-          )}
-        </Box>
-        <Box>
-          <Heading as="h2">Number of Internship Completed Students</Heading>
-          {loadingStudents ? (
-            <Spinner />
-          ) : (
-            <>
-              <h3>{numCompletedStudents}</h3>
-              <IconContainer>
-                <FaUserGraduate size={24} color="#0984e3" />
-              </IconContainer>
-              <StyledLink to="/company/student"> See Detail</StyledLink>
-            </>
-          )}
-        </Box>
-      </DashboardContainer>
+
       <DashboardContainer>
         <Boxs>
           <Box>
-            <Heading as="h2">Number of Internship Students</Heading>
+            <Heading as="h2">Number of Accepted Students</Heading>
             {loadingStudents ? (
               <Spinner />
             ) : (
               <>
-                <h3>{numCompletedStudents}</h3>
+                <h3>{numStudents}</h3>
                 <IconContainer>
                   <FaUserGraduate size={24} color="#0984e3" />
                 </IconContainer>
@@ -157,26 +137,28 @@ function Dashboard() {
             )}
           </Box>
         </Boxs>
-        <Box>
-          <Heading as="h2">Accepted Students Per Departments</Heading>
-          <IconContainer>
-            <FaUserGraduate size={24} color="#0984e3" />
-          </IconContainer>
-          {loadingStudents ? (
-            <Spinner />
-          ) : (
-            <PieChartContainer>
-              <ReactApexChart
-                options={pieOptions}
-                series={departmentDistributionData.series}
-                type="pie"
-                width="380"
-              />
-            </PieChartContainer>
-          )}
+        {showCompany && (
+          <Box>
+            <Heading as="h2">Accepted Students Per Departments</Heading>
+            <IconContainer>
+              <FaUserGraduate size={24} color="#0984e3" />
+            </IconContainer>
+            {loadingStudents ? (
+              <Spinner />
+            ) : (
+              <PieChartContainer>
+                <ReactApexChart
+                  options={pieOptions}
+                  series={departmentDistributionData.series}
+                  type="pie"
+                  width="380"
+                />
+              </PieChartContainer>
+            )}
 
-          <StyledLink to="/company/student"> See Detail</StyledLink>
-        </Box>
+            <StyledLink to="/company/student"> See Detail</StyledLink>
+          </Box>
+        )}
       </DashboardContainer>
     </>
   );

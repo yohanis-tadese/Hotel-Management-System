@@ -53,6 +53,15 @@ function Dashboard() {
   const [loadingApplyStudents, setLoadingApplyStudents] = useState(true);
   const [loadingPlacements, setLoadingPlacements] = useState(true);
 
+  const [showCompany, setShowCompany] = useState(false);
+
+  useEffect(() => {
+    const storedShowCompany = localStorage.getItem("showCompany");
+    if (storedShowCompany) {
+      setShowCompany(JSON.parse(storedShowCompany));
+    }
+  }, [showCompany]);
+
   useEffect(() => {
     async function fetchData() {
       const departmentResponse = await departmentService.getAllDepartments();
@@ -61,7 +70,6 @@ function Dashboard() {
       const studentResponse = await studentService.getAllStudents();
       const adminResponse = await adminService.getAllAdmins();
       const applyStudentResponse = await studentService.getAllApplyStudents();
-      const placementResponse = await placementService.getAllPlacementResults();
 
       await new Promise((resolve) => setTimeout(resolve, 400));
 
@@ -70,8 +78,7 @@ function Dashboard() {
         companyResponse.ok &&
         studentResponse.ok &&
         adminResponse.ok &&
-        applyStudentResponse &&
-        placementResponse
+        applyStudentResponse
       ) {
         const departmentData = await departmentResponse.json();
         const companyData = await companyResponse.json();
@@ -83,7 +90,6 @@ function Dashboard() {
         setNumStudents(studentData.students.length);
         setNumAdmins(adminData.admins.length);
         setNumApplyStudents(applyStudentResponse.students.length);
-        setNumPlacements(placementResponse.length);
       } else {
         console.error("Failed to fetch dashboard data");
       }
@@ -105,7 +111,7 @@ function Dashboard() {
         const studentResponse = await placementService.getAllPlacementResults();
 
         setStudentData(studentResponse);
-
+        setNumPlacements(studentResponse.length);
         setNumStudents(studentResponse.length);
       } catch (error) {
         console.error("Failed to fetch dashboard data:", error);
@@ -118,14 +124,15 @@ function Dashboard() {
 
   const calculateCompanyDistribution = () => {
     const departmentCounts = {};
-    studentData.forEach((student) => {
-      if (departmentCounts.hasOwnProperty(student.company_name)) {
-        departmentCounts[student.company_name]++;
-      } else {
-        departmentCounts[student.company_name] = 1;
-      }
-    });
-
+    if (Array.isArray(studentData)) {
+      studentData.forEach((student) => {
+        if (departmentCounts.hasOwnProperty(student.company_name)) {
+          departmentCounts[student.company_name]++;
+        } else {
+          departmentCounts[student.company_name] = 1;
+        }
+      });
+    }
     return departmentCounts;
   };
 
@@ -223,41 +230,45 @@ function Dashboard() {
           </Box>
           <br />
           <br />
+          {showCompany && (
+            <Box>
+              <Heading as="h2">Number of Assigned Students</Heading>
+              {loadingPlacements ? (
+                <Spinner />
+              ) : (
+                <>
+                  <h3>{numPlacements}</h3>
+                  <IconContainer>
+                    <FaUserGraduate size={24} color="#0984e3" />
+                  </IconContainer>
+                  <StyledLink to="/admin/placement">See detail</StyledLink>
+                </>
+              )}
+            </Box>
+          )}
+        </Boxs>
+        {showCompany && (
           <Box>
-            <Heading as="h2">Number of Assigned Students</Heading>
-            {loadingPlacements ? (
+            <Heading as="h2">Accepted Students Per Departments</Heading>
+            <IconContainer>
+              <FaUserGraduate size={24} color="#0984e3" />
+            </IconContainer>
+            {loadingStudents ? (
               <Spinner />
             ) : (
-              <>
-                <h3>{numPlacements}</h3>
-                <IconContainer>
-                  <FaUserGraduate size={24} color="#0984e3" />
-                </IconContainer>
-                <StyledLink to="/admin/placement">See detail</StyledLink>
-              </>
+              <PieChartContainer>
+                <ReactApexChart
+                  options={pieOptions}
+                  series={departmentDistributionData.series}
+                  type="pie"
+                  width="380"
+                />
+              </PieChartContainer>
             )}
-          </Box>
-        </Boxs>
-        <Box>
-          <Heading as="h2">Accepted Students Per Departments</Heading>
-          <IconContainer>
-            <FaUserGraduate size={24} color="#0984e3" />
-          </IconContainer>
-          {loadingStudents ? (
-            <Spinner />
-          ) : (
-            <PieChartContainer>
-              <ReactApexChart
-                options={pieOptions}
-                series={departmentDistributionData.series}
-                type="pie"
-                width="380"
-              />
-            </PieChartContainer>
-          )}
 
-          <StyledLink to="/admin/placement"> See Detail</StyledLink>
-        </Box>
+            <StyledLink to="/admin/report"> See Detail</StyledLink>
+          </Box>
+        )}
       </DashboardContainer>
     </>
   );

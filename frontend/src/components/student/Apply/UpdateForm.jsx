@@ -7,6 +7,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Header from "../Header/Header";
 import { NavLink } from "react-router-dom";
+import placementService from "../../../services/placement.service";
 
 const CriteriaStyle = styled.div`
   background-color: var(--color-grey-200);
@@ -103,6 +104,7 @@ const UpdateForm = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const { userId } = useAuth();
   const [placementGenerated, setPlacementGenerated] = useState(false);
+  const [placementResults, setPlacementResults] = useState([]);
 
   useEffect(() => {
     // Fetch data from local storage
@@ -112,6 +114,28 @@ const UpdateForm = () => {
       setPlacementGenerated(true);
     }
   }, []);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      fetchPlacementResults();
+      setLoading(false);
+    }, 1000);
+
+    // Clean up function to clear timeout if component unmounts
+    return () => clearTimeout(timeout);
+  }, [userId]);
+
+  const fetchPlacementResults = async () => {
+    try {
+      // Assuming studentId is available from props or context
+      const results = await placementService.getPlacementResult(userId);
+
+      setPlacementResults(results);
+      // console.log("kkkkkkkkkkk", results.placement_id === undefined);
+    } catch (error) {
+      console.error("Error fetching placement results:", error);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -240,7 +264,7 @@ const UpdateForm = () => {
     <CriteriaStyle>
       <Header />
 
-      {placementGenerated ? (
+      {placementResults[0]?.placement_id !== null ? (
         <h2
           style={{
             marginTop: "70px",
@@ -338,14 +362,22 @@ const UpdateForm = () => {
             {errors.gender && <ErrorText>Please select a gender</ErrorText>}
           </FormGroup>
 
+          <h3
+            style={{
+              marginBottom: "20px",
+              fontWeight: "550",
+              color: "#4F46E5",
+            }}
+          >
+            Please select your preference from drop down menu *
+          </h3>
+
           {companies.map((company, preferenceIndex) => (
             <FormGroup
               key={`${preferenceIndex}-${company.company_id}`}
               className="mb-3"
             >
-              <Label>{`Preference ${
-                preferenceIndex + 1
-              } (please select from drop down menu) * `}</Label>
+              <Label>{`Preference ${preferenceIndex + 1} `}</Label>
               <SelectStyled
                 className="form-select"
                 value={studentPreferences[preferenceIndex]}

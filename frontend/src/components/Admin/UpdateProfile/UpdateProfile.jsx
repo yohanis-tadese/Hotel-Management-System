@@ -111,7 +111,7 @@ function UpdateProfile() {
 
         // Show success toast message
         toast.success("Profile updated successfully", {
-          autoClose: 500,
+          autoClose: 1000,
         });
       } catch (error) {
         console.error("Error updating admin profile:", error);

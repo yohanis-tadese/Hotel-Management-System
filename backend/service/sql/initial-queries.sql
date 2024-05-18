@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS `departments` (
   `phone_number` VARCHAR(20),
   `contact_email` VARCHAR(255),
   `office_location` VARCHAR(255),
+  `photo` VARCHAR(255) DEFAULT 'default.jpg', 
   `password` VARCHAR(255) NOT NULL,
   `token` VARCHAR(255), 
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
@@ -105,6 +106,11 @@ CREATE TABLE IF NOT EXISTS `weights` (
   FOREIGN KEY (`admin_id`) REFERENCES `admins`(`admin_id`)
 ) ENGINE=InnoDB;
 
+CREATE TABLE IF NOT EXISTS `apptlytime` (
+  `time_id` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `start_time` DATETIME,
+  `end_time` DATETIME
+);
 
 -- Placement Results Table
 CREATE TABLE IF NOT EXISTS `placement_results` (
@@ -139,15 +145,36 @@ CREATE TABLE IF NOT EXISTS `student_organizational_result` (
   `attachment_to_date` DATE,
   `area_of_work` VARCHAR(255),
   `total_hours` DECIMAL(8,2),
+  `comment`VARCHAR(5000),
   PRIMARY KEY (`result_id`),
   FOREIGN KEY (`student_id`) REFERENCES `students`(`student_id`) ON DELETE CASCADE,
   FOREIGN KEY (`department_id`) REFERENCES `departments`(`department_id`) ON DELETE CASCADE,
   FOREIGN KEY (`company_id`) REFERENCES `companies`(`company_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+-- Presentation Result Table
+CREATE TABLE IF NOT EXISTS `evaluation_result` (
+  `evaluation_result_id` INT(11) NOT NULL AUTO_INCREMENT,
+  `student_id` INT(11) NOT NULL,
+  `department_id` INT(11) NOT NULL,
+  `advisor_score` DECIMAL(5,2),
+  `presentation_score` DECIMAL(5,2),
+  `documentation_score` DECIMAL(5,2),
+   PRIMARY KEY (`evaluation_result_id`),
+  FOREIGN KEY (`student_id`) REFERENCES `students`(`student_id`) ON DELETE CASCADE,
+  FOREIGN KEY (`department_id`) REFERENCES `departments`(`department_id`) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
 -- Insert test admin-defined weights
 INSERT INTO `weights` (`weight_disability`, `weight_gender`, `weight_preference`, `weight_grade`)
 VALUES (10, 10, 50, 30);
+
+-- Insert an admin
+INSERT INTO `admins` (`first_name`, `last_name`, `username`, `email`, `photo`, `password`)
+VALUES 
+  ('Jhon', 'Doee', 'admin.jhon.do', 'admin@example.com', 'default.jpg', '$2b$10$FnNRxXprBvWeyhl4UHiDs./ZaOQg8RVm/ShFg0aqPHe0AqD.I/bO6');
+
+
 
 -- Insert random departments
 INSERT INTO `departments` (`department_name`, `username`, `phone_number`, `contact_email`, `office_location`, `password`)
@@ -158,19 +185,20 @@ VALUES
   ('InfoTechnology', 'dept.infotechnology', '9876543210', 'info_tech@gmail.com', 'Building D', '$2b$10$NQcPKGOvYo6.51l7aR.nkuVxdNZazz7xKE28i8jLKNHmCdcAkWMC2'),
   ('Software', 'dept.software', '2345678901', 'soft_eng@gmail.com', 'Building E', '$2b$10$NQcPKGOvYo6.51l7aR.nkuVxdNZazz7xKE28i8jLKNHmCdcAkWMC2');
 
--- Insert an admin
-INSERT INTO `admins` (`first_name`, `last_name`, `username`, `email`, `photo`, `password`)
-VALUES 
-  ('Jhon', 'Doee', 'admin.jhon.do', 'admin@example.com', 'default.jpg', '$2b$10$FnNRxXprBvWeyhl4UHiDs./ZaOQg8RVm/ShFg0aqPHe0AqD.I/bO6');
 
-
--- Insert five companies
+-- Insert ten companies
 INSERT INTO companies (company_name, username, phone_number, contact_email, location, industry_sector, accepted_student_limit, website, password) VALUES
 ('Zalatech', 'comp.zalatech', '+251912974411', 'info@zalatechs.com', 'Addis Ababa', 'Tech', 4, 'www.zalatechs.com', '$2b$10$NQcPKGOvYo6.51l7aR.nkuVxdNZazz7xKE28i8jLKNHmCdcAkWMC2'),
 ('Cynooxtech', 'comp.cynooxtech', '+251909772885', 'cynooxtech@gmail.com', 'Addis Ababa', 'Tech', 5, 'www.cynoox.com', '$2b$10$NQcPKGOvYo6.51l7aR.nkuVxdNZazz7xKE28i8jLKNHmCdcAkWMC2'),
 ('Fairfaxtech', 'comp.fairfaxtech', '+251115549172', 'info@fairfaxtechnologies.com', 'Addis Ababa', 'Tech', 3, 'www.fairfax.com', '$2b$10$NQcPKGOvYo6.51l7aR.nkuVxdNZazz7xKE28i8jLKNHmCdcAkWMC2'),
 ('Alphait', 'comp.alphait', '+251912254156', 'info@alphaitsolution.com', 'Addis Ababa', 'Tech', 4, 'www.alpha.com', '$2b$10$NQcPKGOvYo6.51l7aR.nkuVxdNZazz7xKE28i8jLKNHmCdcAkWMC2'),
-('PeragoTech', 'comp.peragotech', '+251911231622', 'info@peragosystems.com', 'Addis Ababa', 'Tech', 3, 'www.perago.com', '$2b$10$NQcPKGOvYo6.51l7aR.nkuVxdNZazz7xKE28i8jLKNHmCdcAkWMC2');
+('PeragoTech', 'comp.peragotech', '+251911231622', 'info@peragosystems.com', 'Addis Ababa', 'Tech', 3, 'www.perago.com', '$2b$10$NQcPKGOvYo6.51l7aR.nkuVxdNZazz7xKE28i8jLKNHmCdcAkWMC2'),
+('Technium', 'comp.technium', '+251911000111', 'contact@technium.com', 'Addis Ababa', 'Tech', 4, 'www.technium.com', '$2b$10$NQcPKGOvYo6.51l7aR.nkuVxdNZazz7xKE28i8jLKNHmCdcAkWMC2'),
+('Innovative Minds', 'comp.innovativeminds', '+251911002222', 'info@innovativeminds.com', 'Addis Ababa', 'Tech', 5, 'www.innovativeminds.com', '$2b$10$NQcPKGOvYo6.51l7aR.nkuVxdNZazz7xKE28i8jLKNHmCdcAkWMC2'),
+('NexGenTech', 'comp.nexgentech', '+251911003333', 'contact@nexgentech.com', 'Addis Ababa', 'Tech', 3, 'www.nexgentech.com', '$2b$10$NQcPKGOvYo6.51l7aR.nkuVxdNZazz7xKE28i8jLKNHmCdcAkWMC2'),
+('Tech Giants', 'comp.techgiants', '+251911004444', 'info@techgiants.com', 'Addis Ababa', 'Tech', 4, 'www.techgiants.com', '$2b$10$NQcPKGOvYo6.51l7aR.nkuVxdNZazz7xKE28i8jLKNHmCdcAkWMC2'),
+('FutureTech', 'comp.futuretech', '+251911005555', 'contact@futuretech.com', 'Addis Ababa', 'Tech', 5, 'www.futuretech.com', '$2b$10$NQcPKGOvYo6.51l7aR.nkuVxdNZazz7xKE28i8jLKNHmCdcAkWMC2');
+
 
 -- Insert ten students with different departments
 INSERT INTO students (first_name, last_name, username, phone_number, contact_email, gpa, password, department_id) VALUES
@@ -210,25 +238,20 @@ INSERT INTO `student_apply_form` (`student_id`, `name`, `disability`, `gender`) 
 
 -- Student Preferences Data
 INSERT INTO `student_preferences` (`apply_id`, `preference_order`, `student_id`, `company_id`) VALUES
-(1, 1, 1, 1), (1, 2, 1, 2), (1, 3, 1, 3), (1, 4, 1, 4),
-(2, 1, 2, 2), (2, 2, 2, 3), (2, 3, 2, 1), (2, 4, 2, 4),
-(3, 1, 3, 3), (3, 2, 3, 2), (3, 3, 3, 4), (3, 4, 3, 1),
-(4, 1, 4, 1), (4, 2, 4, 4), (4, 3, 4, 3), (4, 4, 4, 2),
-(5, 1, 5, 5), (5, 2, 5, 4), (5, 3, 5, 3), (5, 4, 5, 2),
-(6, 1, 6, 2), (6, 2, 6, 1), (6, 3, 6, 3), (6, 4, 6, 4),
-(7, 1, 7, 2), (7, 2, 7, 3), (7, 3, 7, 1), (7, 4, 7, 4),
-(8, 1, 8, 3), (8, 2, 8, 2), (8, 3, 8, 4), (8, 4, 8, 1),
-(9, 1, 9, 4), (9, 2, 9, 2), (9, 3, 9, 1), (9, 4, 9, 5),
-(10, 1, 10, 5), (10, 2, 10, 4), (10, 3, 10, 3), (10, 4, 10, 2),
-(11, 1, 11, 1), (11, 2, 11, 2), (11, 3, 11, 3), (11, 4, 11, 4),
-(12, 1, 12, 3), (12, 2, 12, 2), (12, 3, 12, 4), (12, 4, 12, 1),
-(13, 1, 13, 2), (13, 2, 13, 1), (13, 3, 13, 3), (13, 4, 13, 4),
-(14, 1, 14, 3), (14, 2, 14, 4), (14, 3, 14, 2), (14, 4, 14, 1),
-(15, 1, 15, 2), (15, 2, 15, 1), (15, 3, 15, 3), (15, 4, 15, 4);
-
-
-
-
-
+(1, 1, 1, 1), (1, 2, 1, 2), (1, 3, 1, 3), (1, 4, 1, 4), (1, 5, 1, 5), (1, 6, 1, 6), (1, 7, 1, 7), (1, 8, 1, 8), (1, 9, 1, 9), (1, 10, 1, 10),
+(2, 1, 2, 2), (2, 2, 2, 3), (2, 3, 2, 1), (2, 4, 2, 4), (2, 5, 2, 5), (2, 6, 2, 6), (2, 7, 2, 7), (2, 8, 2, 8), (2, 9, 2, 9), (2, 10, 2, 10),
+(3, 1, 3, 3), (3, 2, 3, 2), (3, 3, 3, 4), (3, 4, 3, 1), (3, 5, 3, 5), (3, 6, 3, 6), (3, 7, 3, 7), (3, 8, 3, 8), (3, 9, 3, 9), (3, 10, 3, 10),
+(4, 1, 4, 1), (4, 2, 4, 4), (4, 3, 4, 3), (4, 4, 4, 2), (4, 5, 4, 5), (4, 6, 4, 6), (4, 7, 4, 7), (4, 8, 4, 8), (4, 9, 4, 9), (4, 10, 4, 10),
+(5, 1, 5, 5), (5, 2, 5, 4), (5, 3, 5, 3), (5, 4, 5, 2), (5, 5, 5, 1), (5, 6, 5, 6), (5, 7, 5, 7), (5, 8, 5, 8), (5, 9, 5, 9), (5, 10, 5, 10),
+(6, 1, 6, 2), (6, 2, 6, 1), (6, 3, 6, 3), (6, 4, 6, 4), (6, 5, 6, 5), (6, 6, 6, 6), (6, 7, 6, 7), (6, 8, 6, 8), (6, 9, 6, 9), (6, 10, 6, 10),
+(7, 1, 7, 2), (7, 2, 7, 3), (7, 3, 7, 1), (7, 4, 7, 4), (7, 5, 7, 5), (7, 6, 7, 6), (7, 7, 7, 7), (7, 8, 7, 8), (7, 9, 7, 9), (7, 10, 7, 10),
+(8, 1, 8, 3), (8, 2, 8, 2), (8, 3, 8, 4), (8, 4, 8, 1), (8, 5, 8, 5), (8, 6, 8, 6), (8, 7, 8, 7), (8, 8, 8, 8), (8, 9, 8, 9), (8, 10, 8, 10),
+(9, 1, 9, 4), (9, 2, 9, 2), (9, 3, 9, 1), (9, 4, 9, 5), (9, 5, 9, 3), (9, 6, 9, 6), (9, 7, 9, 7), (9, 8, 9, 8), (9, 9, 9, 9), (9, 10, 9, 10),
+(10, 1, 10, 5), (10, 2, 10, 4), (10, 3, 10, 3), (10, 4, 10, 2), (10, 5, 10, 1), (10, 6, 10, 6), (10, 7, 10, 7), (10, 8, 10, 8), (10, 9, 10, 9), (10, 10, 10, 10),
+(11, 1, 11, 1), (11, 2, 11, 2), (11, 3, 11, 3), (11, 4, 11, 4), (11, 5, 11, 5), (11, 6, 11, 6), (11, 7, 11, 7), (11, 8, 11, 8), (11, 9, 11, 9), (11, 10, 11, 10),
+(12, 1, 12, 3), (12, 2, 12, 2), (12, 3, 12, 4), (12, 4, 12, 1), (12, 5, 12, 5), (12, 6, 12, 6), (12, 7, 12, 7), (12, 8, 12, 8), (12, 9, 12, 9), (12, 10, 12, 10),
+(13, 1, 13, 2), (13, 2, 13, 1), (13, 3, 13, 3), (13, 4, 13, 4), (13, 5, 13, 5), (13, 6, 13, 6), (13, 7, 13, 7), (13, 8, 13, 8), (13, 9, 13, 9), (13, 10, 13, 10),
+(14, 1, 14, 3), (14, 2, 14, 4), (14, 3, 14, 2), (14, 4, 14, 1), (14, 5, 14, 5), (14, 6, 14, 6), (14, 7, 14, 7), (14, 8, 14, 8), (14, 9, 14, 9), (14, 10, 14, 10),
+(15, 1, 15, 2), (15, 2, 15, 1), (15, 3, 15, 3), (15, 4, 15, 4), (15, 5, 15, 5), (15, 6, 15, 6), (15, 7, 15, 7), (15, 8, 15, 8), (15, 9, 15, 9), (15, 10, 15, 10);
 
 

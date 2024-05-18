@@ -41,18 +41,6 @@ const StyledButton = styled.button`
   }
 `;
 
-// const NotificationIcon = styled.div`
-//   border-radius: 50%;
-//   position: relative;
-//   font-size: 2.5rem;
-//   color: var(--color-primary);
-//   cursor: pointer;
-
-//   &:hover {
-//     color: var(--color-primary-light);
-//   }
-// `;
-
 function HeaderMenu() {
   const navigate = useNavigate();
   const { setIsLogged, secondName } = useAuth();
@@ -84,29 +72,6 @@ function HeaderMenu() {
   return (
     <StyledHeaderMenu>
       <WelcomeMessage>Wellcome, {secondName}</WelcomeMessage>
-
-      {/* <NotificationIcon>
-        <IoIosNotificationsOutline />
-        <span
-          style={{
-            position: "absolute",
-            background: "red",
-            width: "15px",
-            height: "15px",
-            fontSize: "10px",
-            fontWeight: "550",
-            right: "1px",
-            top: "6px",
-            color: "#fff",
-            borderRadius: "50%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          3
-        </span>
-      </NotificationIcon> */}
 
       <DarkModeToggle />
 

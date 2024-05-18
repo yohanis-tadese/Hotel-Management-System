@@ -114,7 +114,7 @@ const EditCompany = ({
           throw new Error(response.error); // Handle the error
         } else {
           // Handle successful response
-          toast.success("Company updated successfully", { autoClose: 700 });
+          toast.success("Company updated successfully", { autoClose: 1000 });
 
           // Clear any previous errors
           setErrors({});

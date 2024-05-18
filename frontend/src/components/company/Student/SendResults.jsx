@@ -4,6 +4,7 @@ import Modal from "./Modal";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import resultService from "../../../services/result.service";
+import Textarea from "./../../../ui/Textarea";
 
 const Form = styled.form`
   display: flex;
@@ -75,6 +76,7 @@ const SendResults = ({ studentId, departmentId, companyId, onClose }) => {
     attachment_to_date: "",
     area_of_work: "",
     total_hours: "",
+    comment: "",
   });
 
   const handleChange = (e) => {
@@ -433,7 +435,17 @@ const SendResults = ({ studentId, departmentId, companyId, onClose }) => {
                   name="total_hours"
                   value={formData.total_hours}
                   onChange={handleChange}
-              
+                  maxAllowed={1000}
+                />
+              </div>
+              <div>
+                <Label htmlFor="comment">Give Comment About This Student</Label>
+                <Textarea
+                  id="comment"
+                  name="comment"
+                  value={formData.comment}
+                  onChange={handleChange}
+                  maxLength={1000}
                 />
               </div>
             </InputContainer>

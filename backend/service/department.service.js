@@ -156,6 +156,96 @@ async function deleteDepartment(departmentId) {
   }
 }
 
+async function updateDepartmentProfile(
+  departmentId,
+  departmentData,
+  photoFilename
+) {
+  try {
+    const { department_name, phone_number, contact_email, office_location } =
+      departmentData;
+
+    // Check if a photo filename is provided and update the department accordingly
+    if (photoFilename) {
+      departmentData.photo = photoFilename;
+    }
+
+    const username = `dept.${department_name.toLowerCase()}`;
+
+    // Construct the update SQL query
+    let updateSql = `
+      UPDATE departments
+      SET department_name = ?,
+          username = ?,
+          phone_number = ?,
+          contact_email = ?,
+          office_location = ?,
+          photo = ?
+     WHERE department_id = ?   
+    `;
+
+    const params = [
+      department_name,
+      username,
+      phone_number,
+      contact_email,
+      office_location,
+      departmentData.photo,
+      departmentId,
+    ];
+
+    const result = await query(updateSql, params);
+
+    // Check if the update was successful
+    return result.affectedRows > 0;
+  } catch (error) {
+    throw new Error(`Error updating department profile: ${error.message}`);
+  }
+}
+
+async function getDepartmentPhoto(departmentId) {
+  try {
+    const sql = `
+      SELECT photo_filename 
+      FROM departments
+      WHERE department_id = ?
+    `;
+    const [department] = await query(sql, [departmentId]);
+
+    return department ? department.photo_filename : null;
+  } catch (error) {
+    throw new Error(`Error getting department photo: ${error.message}`);
+  }
+}
+
+async function changePassword(departmentId, oldPassword, newPassword) {
+  try {
+    // Retrieve the hashed password from the database
+    const sql = `SELECT password FROM departments WHERE department_id = ?`;
+    const [department] = await query(sql, [departmentId]);
+
+    // Compare the provided old password with the stored hashed password
+    const passwordMatch = await bcrypt.compare(
+      oldPassword,
+      department.password
+    );
+
+    // If passwords match, hash the new password and update it in the database
+    if (passwordMatch) {
+      const hashedNewPassword = await hashPassword(newPassword);
+      const updateSql = `UPDATE departments SET password = ? WHERE department_id = ?`;
+      const result = await query(updateSql, [hashedNewPassword, departmentId]);
+
+      // Check if the update was successful
+      return result.affectedRows > 0;
+    } else {
+      return false; // Old password does not match
+    }
+  } catch (error) {
+    throw new Error(`Error changing password: ${error.message}`);
+  }
+}
+
 // Function to retrieve distinct department IDs from the departments table
 async function getDepartmentIds() {
   try {
@@ -178,4 +268,7 @@ module.exports = {
   updateDepartment,
   deleteDepartment,
   getDepartmentIds,
+  updateDepartmentProfile,
+  getDepartmentPhoto,
+  changePassword,
 };

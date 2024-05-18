@@ -14,6 +14,7 @@ import ReactApexChart from "react-apexcharts";
 import DashboardContainer from "../../ui/DashboardContainer";
 import Spinner from "../../ui/Spinner";
 import placementService from "../../services/placement.service";
+import depResultService from "../../services/dept.results.service";
 import Boxs from "../../ui/Boxes";
 
 const StyledLink = styled(Link)`
@@ -41,10 +42,20 @@ function Dashboard() {
   const [numCompanies, setNumCompanies] = useState(0);
   const [numStudents, setNumStudents] = useState(0);
   const [numSendResults, setNumSendResults] = useState(0);
+  const [numEvaluatedResults, setNumEvaluatedResults] = useState(0); // New state for evaluated results count
   const [studentData, setStudentData] = useState([]);
   const [loadingStudents, setLoadingStudents] = useState(true);
 
   const { userId } = useAuth();
+
+  const [showCompany, setShowCompany] = useState(false);
+
+  useEffect(() => {
+    const storedShowCompany = localStorage.getItem("showCompany");
+    if (storedShowCompany) {
+      setShowCompany(JSON.parse(storedShowCompany));
+    }
+  }, [showCompany]);
 
   useEffect(() => {
     // Fetch real data for the dashboard
@@ -60,6 +71,9 @@ function Dashboard() {
           userId
         );
 
+        const evaluatedResultsResponse =
+          await depResultService.getResultsByDepartmentId(userId);
+
         if (companyResponse.ok && studentResponse.ok) {
           const companyData = await companyResponse.json();
           const studentData = await studentResponse.json();
@@ -67,6 +81,7 @@ function Dashboard() {
           setNumCompanies(companyData.companies.length);
           setNumStudents(studentData.length);
           setNumSendResults(resultResponse.length);
+          setNumEvaluatedResults(evaluatedResultsResponse.length);
         } else {
           console.error("Failed to fetch dashboard data");
         }
@@ -147,7 +162,7 @@ function Dashboard() {
         </Box>
         <Boxs>
           <Box>
-            <Heading as="h2">Number Of Students Who Sent Results</Heading>
+            <Heading as="h2">Student With Organizational Results</Heading>
             <h3>{numSendResults}</h3>
             <IconContainer>
               <MdBusiness size={24} color="#0984e3" />
@@ -158,16 +173,17 @@ function Dashboard() {
           </Box>
           <br />
           <Box>
-            <Heading as="h2">Number Of Students Who Sent Results</Heading>
-            <h3>{numSendResults}</h3>
+            <Heading as="h2">Fully Evaluated Students</Heading>
+            <h3>{numEvaluatedResults}</h3>
             <IconContainer>
               <MdBusiness size={24} color="#0984e3" />
             </IconContainer>
-            <StyledLink to="/department/student-organizational-results">
+            <StyledLink to="/department/student-evaluation-results">
               See detail
             </StyledLink>
           </Box>
         </Boxs>
+
         <Box>
           <Heading as="h2">Assigned Student Lists</Heading>
           <IconContainer>

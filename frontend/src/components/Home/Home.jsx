@@ -13,7 +13,7 @@ const HeroWrapper = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   align-items: center;
-  gap: 9.8rem;
+  gap: 5.8rem;
   max-width: 130rem;
   margin: 0 auto;
   padding: 0 3.2rem;
@@ -39,7 +39,7 @@ const NavLinkButton = styled(NavLink)`
   display: inline-block;
   font-size: 2rem;
   text-decoration: none;
-  padding: 1.2rem 3.2rem;
+  padding: 1.2rem 5.2rem;
   border-radius: 1rem;
   transition: background-color 0.6s;
 
@@ -68,7 +68,9 @@ const NavLinkButton = styled(NavLink)`
   }
 `;
 
-const HeroImage = styled.div``;
+const HeroImage = styled.div`
+  width: 600px;
+`;
 
 const Main = () => {
   return (

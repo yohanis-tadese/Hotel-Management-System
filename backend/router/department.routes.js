@@ -10,4 +10,20 @@ router.patch("/api/department/:id", departmentController.updateDepartment);
 router.delete("/api/department/:id", departmentController.deleteDepartment);
 router.get("/api/departments/id", departmentController.getDepartmentIds);
 
+router.get(
+  "/api/department/:id/photo",
+  departmentController.getDepartmentPhoto
+);
+
+router.patch(
+  "/api/department/profile/:id",
+  departmentController.updateDepartmentProfile,
+  departmentController.updateDepartmentPhoto
+);
+
+router.patch(
+  "/api/department/password/:id",
+  departmentController.changePassword
+);
+
 module.exports = router;

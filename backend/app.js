@@ -5,13 +5,13 @@ const router = require("./router/index");
 
 const app = express();
 
-// Define CORS options
-const corsOptions = {
-  origin: "http://localhost:5173",
-};
+// // Define CORS options
+// const corsOptions = {
+//   origin: "http://localhost:5173",
+// };
 
 // Add CORS middleware with custom options
-app.use(cors(corsOptions));
+app.use(cors());
 
 app.use(express.static("public"));
 

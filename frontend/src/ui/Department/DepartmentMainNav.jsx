@@ -3,10 +3,10 @@ import { NavLink } from "react-router-dom";
 import styled from "styled-components";
 import {
   HiOutlineCalendar,
-  HiOutlineCog,
   HiOutlineHome,
-  HiOutlineUsers,
-} from "react-icons/hi2";
+  HiOutlineUser,
+  HiOutlineClipboardCheck,
+} from "react-icons/hi";
 
 const NavList = styled.ul`
   display: flex;
@@ -65,26 +65,32 @@ function DepMainNav() {
         </li>
         <li>
           <StyledNavLink to="/department/student">
-            <HiOutlineCalendar />
-            <span>Student</span>
+            <HiOutlineUser />
+            <span>Manage Student</span>
           </StyledNavLink>
         </li>
         <li>
           <StyledNavLink to="/department/student-results">
-            <HiOutlineCalendar />
-            <span>Results</span>
+            <HiOutlineClipboardCheck />
+            <span>See Result</span>
           </StyledNavLink>
         </li>
         <li>
           <StyledNavLink to="/department/student-status">
             <HiOutlineCalendar />
-            <span>Status</span>
+            <span>Track Status</span>
           </StyledNavLink>
         </li>
         <li>
           <StyledNavLink to="/department/student-grade">
             <HiOutlineCalendar />
-            <span>Grade</span>
+            <span>Set Grade</span>
+          </StyledNavLink>
+        </li>
+        <li>
+          <StyledNavLink to="/department/account">
+            <HiOutlineUser />
+            <span>Update Profile</span>
           </StyledNavLink>
         </li>
       </NavList>

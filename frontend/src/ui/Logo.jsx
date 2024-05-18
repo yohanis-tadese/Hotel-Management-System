@@ -4,7 +4,7 @@ import { styled } from "styled-components";
 
 const StyledLogo = styled.div`
   text-align: center;
-  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2); /* Add box-shadow */
+  border-bottom: 0.5px solid #7dc400;
 `;
 
 const Img = styled.img`

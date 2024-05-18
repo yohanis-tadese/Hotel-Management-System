@@ -34,13 +34,12 @@
 }
 
 .company-logo img {
-  width: 120px;
-  height: 70px;
+  width: 130px;
   margin-top: 5px;
   margin-bottom: 5px;
   margin-left: 25px;
   margin-right: 25px;
-  border: 1px solid #eeeeee;
+  border-right: 1px solid #eeeeee;
 }
 
 .company-name {

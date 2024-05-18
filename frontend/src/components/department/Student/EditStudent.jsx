@@ -152,7 +152,7 @@ const EditStudent = ({ studentId, initialData, onCancel, fetchStudents }) => {
 
       if (response.status === 200) {
         setErrors({});
-        toast.success(responseData.message, { autoClose: 700 });
+        toast.success(responseData.message, { autoClose: 1000 });
       }
 
       setModalVisible(false);

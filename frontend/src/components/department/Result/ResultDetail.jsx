@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import Modal from "./Modal";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import resultService from "../../../services/result.service";
+import Textarea from "./../../../ui/Textarea";
+import Modal from "../../../ui/Modal";
 
 const Form = styled.form`
   display: flex;
   flex-direction: column;
   padding: 30px;
-  align-item: center;
   margin: 10px auto;
 `;
 
@@ -107,7 +107,9 @@ const SeeResultDetail = ({ studentId, onClose }) => {
               >
                 {result.student_first_name} {result.student_last_name}
               </h2>
-              <h2 style={{ padding: "10px" }}>Student General information</h2>
+              <h2 style={{ padding: "10px", color: "#80C508" }}>
+                Student General information
+              </h2>
               <InputContainer
                 style={{
                   border: "1px solid var(--color-grey-200",
@@ -159,7 +161,7 @@ const SeeResultDetail = ({ studentId, onClose }) => {
                 </div>
               </InputContainer>
 
-              <h2 style={{ padding: "10px" }}>
+              <h2 style={{ padding: "10px", color: "#80C508" }}>
                 Personality and Behavioral Traits (15%)
               </h2>
               <InputContainer
@@ -227,7 +229,8 @@ const SeeResultDetail = ({ studentId, onClose }) => {
                   </HeadingTwo>
                 </div>
               </InputContainer>
-              <h2 style={{ padding: "10px" }}>
+
+              <h2 style={{ padding: "10px", color: "#80C508" }}>
                 Work-Related Performance Indicator (25%){" "}
               </h2>
               <InputContainer
@@ -291,6 +294,27 @@ const SeeResultDetail = ({ studentId, onClose }) => {
                   </HeadingTwo>
                 </div>
               </InputContainer>
+              <h2 style={{ padding: "10px", color: "#80C508" }}>
+                Company Comment About Student
+              </h2>
+              <InputContainers
+                style={{
+                  border: "1px solid var(--color-grey-200)",
+                  padding: "20px",
+                }}
+              >
+                <Textarea
+                  readOnly
+                  style={{
+                    fontFamily: "monospace",
+                    fontSize: "15px",
+                    textAlign: "justify",
+                    height: "20rem",
+                  }}
+                >
+                  {result.comment}
+                </Textarea>
+              </InputContainers>
             </InputContainers>
           ))}
 

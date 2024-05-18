@@ -81,6 +81,12 @@ const CreateCompany = () => {
       valid = false;
     }
 
+    // Validate website
+    if (!formData.website) {
+      newErrors.website = "Website is required";
+      valid = false;
+    }
+
     // Validate password
     if (!formData.password) {
       newErrors.password = "Password is required";
@@ -253,7 +259,7 @@ const CreateCompany = () => {
               />
             </FormRow>
 
-            <FormRow label="Website">
+            <FormRow label="Website" error={errors.website}>
               <Input
                 type="text"
                 id="website"

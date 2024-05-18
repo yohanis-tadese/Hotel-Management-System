@@ -3,6 +3,7 @@ import styled from "styled-components";
 import Heading from "./../../../ui/Heading";
 import placementService from "./../../../services/placement.service";
 import { useAuth } from "./../../../context/AuthContext";
+import PrintButton from "../../../ui/PrintButton";
 
 // Styled component for placement result table
 const PlacementResultTable = styled.table`
@@ -59,7 +60,11 @@ const PlacementResult = () => {
     <>
       <Heading as="h1">Placement Results</Heading>
 
-      <PlacementResultTable>
+      <div>
+        <PrintButton printableElementId="printableTable" />
+      </div>
+
+      <PlacementResultTable id="printableTable">
         <thead>
           <TableRow>
             <TableHeaderCell>ID</TableHeaderCell>

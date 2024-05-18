@@ -53,7 +53,6 @@ const ApplyStudentList = ({ showCompany }) => {
   const fetchData = async () => {
     try {
       const response = await studentService.getAllApplyStudents();
-      console.log("helllo", response.students);
       if (response) {
         setData(response.students);
       } else {
