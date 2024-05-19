@@ -7,12 +7,13 @@ import PrintButton from "../../../ui/PrintButton";
 
 const PlacementResultsContainer = styled.div`
   margin-top: 20px;
+  position: relative;
 `;
 
 const PlacementResultTable = styled.table`
   width: 100%;
   border-collapse: collapse;
-  border: 1px solid var(--color-grey-100);
+  border: 1px solid var(--color-grey-200);
 `;
 
 const TableRow = styled.tr`
@@ -24,13 +25,20 @@ const TableRow = styled.tr`
 const TableHeaderCell = styled.th`
   padding: 10px;
   text-align: left;
-  border-bottom: 1px solid #ddd;
   background-color: var(--color-grey-100);
 `;
 
 const TableCell = styled.td`
   padding: 10px;
-  border-bottom: 1px solid #ddd;
+  border: 1px solid var(--color-grey-200);
+`;
+
+const PrintButtonWrapper = styled.div`
+  position: absolute;
+  margin: auto;
+  align-items: center;
+  right: 15px;
+  top: 108%;
 `;
 
 const EvaluationResult = () => {
@@ -71,8 +79,6 @@ const EvaluationResult = () => {
   return (
     <>
       <Heading as="h1">All Accepted Students</Heading>
-
-      <PrintButton printableElementId="printableTable" />
 
       <PlacementResultsContainer id="printableTable">
         <PlacementResultTable>
@@ -150,6 +156,10 @@ const EvaluationResult = () => {
             ))}
           </tbody>
         </PlacementResultTable>
+
+        <PrintButtonWrapper>
+          <PrintButton printableElementId="printableTable" />
+        </PrintButtonWrapper>
       </PlacementResultsContainer>
     </>
   );

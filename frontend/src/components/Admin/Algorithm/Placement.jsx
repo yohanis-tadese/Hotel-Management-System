@@ -6,6 +6,8 @@ import criteriaService from "../../../services/criteria.service";
 import companyService from "../../../services/company.service";
 import ApplyStudentList from "../ApplyStudentList/ApplyStudentList";
 import ConfirmationDialog from "./ConfirmationDialog";
+import { fetchRemainingTime } from "../../../utils/timeUtils";
+import ApplyTime from "../applyTime/ApplyTime";
 
 const Button = styled.button`
   padding: 10px 20px;
@@ -48,6 +50,32 @@ const StudentPlacement = () => {
     );
     localStorage.setItem("showCompany", JSON.stringify(showCompany));
   }, [placementGenerated, showCompany]);
+
+  useEffect(() => {
+    const fetchRemainingTimeAndGeneratePlacement = async () => {
+      try {
+        const remainingTime = await fetchRemainingTime(1);
+        if (remainingTime === 0 && !placementGenerated) {
+          console.log("Generating placement...");
+          if (companiesData.length > 0) {
+            assignStudentsToCompanies();
+            setPlacementGenerated(true);
+            setShowCompany(true);
+          } else {
+            console.log("Companies data not available yet.");
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching remaining time:", error);
+      }
+    };
+
+    const intervalId = setInterval(() => {
+      fetchRemainingTimeAndGeneratePlacement();
+    }, 3000);
+
+    return () => clearInterval(intervalId);
+  }, [placementGenerated]);
 
   useEffect(() => {
     updateWeights();
@@ -130,8 +158,8 @@ const StudentPlacement = () => {
       const studentsData = studentsResponse.students;
 
       studentsData.forEach((student) => {
-        const preferences = student.preferences.split(",").map(Number); // Parse preferences into an array of numbers
-        student.preferences = preferences; // Update student object with parsed preferences array
+        const preferences = student.preferences.split(",").map(Number);
+        student.preferences = preferences;
 
         preferences.forEach((pref) => {
           if (studentPreferences.has(pref)) {
@@ -204,33 +232,44 @@ const StudentPlacement = () => {
 
   return (
     <div>
-      {!placementGenerated ? (
-        <Button
-          primary={placementGenerated ? "false" : "true"}
-          onClick={() => {
-            console.log("Generating placement...");
-            assignStudentsToCompanies();
-            setPlacementGenerated(true);
-            setShowCompany(true);
-          }}
-        >
-          Generate placement
-        </Button>
-      ) : (
-        <>
-          <Button primary="false" onClick={() => setShowConfirmation(true)}>
-            Reset placement
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          margin: "auto",
+          gap: "5rem",
+        }}
+      >
+        {!placementGenerated ? (
+          <Button
+            primary={placementGenerated ? "false" : "true"}
+            onClick={() => {
+              console.log("Generating placement...");
+              assignStudentsToCompanies();
+              setPlacementGenerated(true);
+              setShowCompany(true);
+            }}
+          >
+            Generate placement
           </Button>
+        ) : (
+          <>
+            <Button primary="false" onClick={() => setShowConfirmation(true)}>
+              Reset placement
+            </Button>
 
-          {showConfirmation && (
-            <ConfirmationDialog
-              message="Are you sure you want to reset placement?."
-              onConfirm={handleResetPlacement}
-              onCancel={() => setShowConfirmation(false)}
-            />
-          )}
-        </>
-      )}
+            {showConfirmation && (
+              <ConfirmationDialog
+                message="Are you sure you want to reset placement?."
+                onConfirm={handleResetPlacement}
+                onCancel={() => setShowConfirmation(false)}
+              />
+            )}
+          </>
+        )}
+        <ApplyTime />
+      </div>
+
       <ApplyStudentList
         showCompany={showCompany}
         companiesData={companiesData}

@@ -7,7 +7,7 @@ import CancelButton from "../../../ui/CancelButton";
 import Form from "./../../../ui/Form";
 import { useAuth } from "../../../context/AuthContext";
 import Button from "../../../ui/Button";
-import companyService from "../../../services/company.service";
+import departmentService from "../../../services/department.service";
 
 function UpdatePassword() {
   const { userId } = useAuth();
@@ -34,7 +34,7 @@ function UpdatePassword() {
   const validateForm = () => {
     const errors = {};
     if (formData.newPassword.length < 6) {
-      errors.password = "Password must be at least 6 characters long";
+      errors.newPassword = "Password must be at least 6 characters long";
     }
     if (formData.newPassword !== formData.confirmPassword) {
       errors.confirmPassword = "Passwords do not match";
@@ -49,11 +49,10 @@ function UpdatePassword() {
     if (!validateForm()) return;
 
     try {
-      const response = await companyService.changePassword(
+      const response = await departmentService.changePassword(
         userId,
         formData.oldPassword,
-        formData.newPassword,
-        formData.confirmPassword
+        formData.newPassword
       );
       if (response) {
         if (response.status === 200) {
@@ -92,7 +91,7 @@ function UpdatePassword() {
   return (
     <>
       <Form onSubmit={handlePasswordChange}>
-        <FormRow label="Old Password" error={errors?.password}>
+        <FormRow label="Old Password" error={errors?.oldPassword}>
           <Input
             type={showPassword ? "text" : "password"}
             id="oldPassword"
@@ -102,7 +101,7 @@ function UpdatePassword() {
           />
         </FormRow>
 
-        <FormRow label="New Password" error={errors?.password}>
+        <FormRow label="New Password" error={errors?.newPassword}>
           <Input
             type={showPassword ? "text" : "password"}
             id="newPassword"

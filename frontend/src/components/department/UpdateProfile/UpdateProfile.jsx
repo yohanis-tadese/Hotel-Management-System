@@ -7,56 +7,47 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import CancelButton from "../../../ui/CancelButton";
 import { useAuth } from "../../../context/AuthContext";
-import companyService from "../../../services/company.service";
+import departmentService from "../../../services/department.service";
 
 function UpdateProfile() {
   const { userId } = useAuth();
 
   const [formData, setFormData] = useState({
-    company_name: "",
+    department_name: "",
     phone_number: "",
     contact_email: "",
-    location: "",
-    industry_sector: "",
-    website: "",
-    photo: "default.jpg",
+    office_location: "",
+    photo: null,
   });
 
   const [errors, setErrors] = useState({});
 
-  const fetchCompanyData = async () => {
+  const fetchDepartmentData = async () => {
     try {
-      const response = await companyService.getCompany(userId);
+      const response = await departmentService.getDepartments(userId);
 
       if (!response.ok) {
-        throw new Error("Failed to fetch admin data");
+        throw new Error("Failed to fetch department data");
       }
-      const companyData = await response.json();
-      const company = companyData.company;
+      const departmentData = await response.json();
+      const department = departmentData.department;
 
-      setFormData(company);
+      setFormData(department);
     } catch (error) {
-      console.error("Error fetching company data:", error);
-      toast.error("Error fetching company data", { autoClose: 2000 });
+      console.error("Error fetching department data:", error);
+      toast.error("Error fetching department data", { autoClose: 2000 });
     }
   };
 
   useEffect(() => {
-    fetchCompanyData();
+    fetchDepartmentData();
   }, [userId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    let newValue = value;
-
-    // Validate first name and last name (only allow letters and spaces)
-    if (name === "company_name") {
-      newValue = value.replace(/[^A-Za-z\s]/g, "");
-    }
-
     setFormData((prevData) => ({
       ...prevData,
-      [name]: newValue,
+      [name]: value,
     }));
   };
 
@@ -71,38 +62,31 @@ function UpdateProfile() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const errors = {};
-    if (!formData.company_name) {
-      errors.company_name = "Company Name is required";
-    } else if (!/^[A-Za-z\s]+$/.test(formData.company_name)) {
-      errors.company_name = "Company Name must contain only letters and spaces";
-    } else if (formData.company_name.length < 4) {
-      errors.company_name = "Company Name must be at least 4 characters long";
+    if (!formData.department_name) {
+      errors.department_name = "Department Name is required";
     }
-
     setErrors(errors);
 
     // If there are no errors, submit the form
     if (Object.keys(errors).length === 0) {
       try {
         const formDataWithFile = new FormData();
-        formDataWithFile.append("company_name", formData.company_name);
+        formDataWithFile.append("department_name", formData.department_name);
         formDataWithFile.append("phone_number", formData.phone_number);
         formDataWithFile.append("contact_email", formData.contact_email);
-        formDataWithFile.append("location", formData.location);
-        formDataWithFile.append("industry_sector", formData.industry_sector);
-        formDataWithFile.append("website", formData.website);
+        formDataWithFile.append("office_location", formData.office_location);
         if (formData.photo) {
           formDataWithFile.append("photo", formData.photo);
         }
 
-        // Update admin information
-        const updateResponse = await companyService.updateCompanyProfile(
+        // Update department information
+        const updateResponse = await departmentService.updateDepartmentProfile(
           userId,
           formDataWithFile
         );
 
-        if (!updateResponse.ok) {
-          throw new Error("Failed to update admin");
+        if (!updateResponse) {
+          throw new Error("Failed to update department profile");
         }
 
         // Show success toast message
@@ -110,21 +94,21 @@ function UpdateProfile() {
           autoClose: 1000,
         });
       } catch (error) {
-        console.error("Error updating admin profile:", error);
+        console.error("Error updating department profile:", error);
         // Show error toast message
-        toast.error("Failed to update admin profile", { autoClose: 1000 });
+        toast.error("Failed to update department profile", { autoClose: 1000 });
       }
     }
   };
 
   return (
     <Form onSubmit={handleSubmit}>
-      <FormRow label="Company Name" error={errors?.company_name}>
+      <FormRow label="Department Name" error={errors?.department_name}>
         <Input
           type="text"
-          id="company_name"
-          name="company_name"
-          value={formData.company_name}
+          id="department_name"
+          name="department_name"
+          value={formData.department_name}
           onChange={handleChange}
         />
       </FormRow>
@@ -150,32 +134,12 @@ function UpdateProfile() {
         />
       </FormRow>
 
-      <FormRow label="Location" error={errors?.location}>
+      <FormRow label="Office Location" error={errors?.office_location}>
         <Input
           type="text"
-          id="location"
-          name="location"
-          value={formData.location}
-          onChange={handleChange}
-        />
-      </FormRow>
-
-      <FormRow label="Industry Sector" error={errors?.industry_sector}>
-        <Input
-          type="text"
-          id="industry_sector"
-          name="industry_sector"
-          value={formData.industry_sector}
-          onChange={handleChange}
-        />
-      </FormRow>
-
-      <FormRow label="Website" error={errors?.website}>
-        <Input
-          type="text"
-          id="website"
-          name="website"
-          value={formData.website}
+          id="office_location"
+          name="office_location"
+          value={formData.office_location}
           onChange={handleChange}
         />
       </FormRow>
@@ -196,9 +160,10 @@ function UpdateProfile() {
           type="reset"
           onClick={() =>
             setFormData({
-              company_name: "",
+              department_name: "",
               phone_number: "",
               contact_email: "",
+              office_location: "",
               photo: null,
             })
           }

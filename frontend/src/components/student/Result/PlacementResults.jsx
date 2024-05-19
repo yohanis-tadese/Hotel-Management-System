@@ -6,6 +6,7 @@ import Header from "../Header/Header";
 import Spinner from "../../../ui/Spinner";
 import avatar from "../../../../../backend/public/images/admin/default.jpg";
 import studentService from "../../../services/student.service";
+import { fetchRemainingTime } from "../../../utils/timeUtils";
 
 // Styled components
 const PlacementContainer = styled.div`
@@ -117,6 +118,15 @@ const PlacementResults = () => {
   const [loading, setLoading] = useState(true);
   const [photoUrl, setPhotoUrl] = useState(null);
 
+  const [remainingTime, setRemainingTime] = useState(null);
+
+  useEffect(() => {
+    // Fetch remaining time separately
+    fetchRemainingTime(1).then((remainingTime) => {
+      setRemainingTime(remainingTime);
+    });
+  }, []);
+
   useEffect(() => {
     const fetchStudentPhoto = async () => {
       try {
@@ -189,10 +199,11 @@ const PlacementResults = () => {
           <Spinner />
         ) : (
           <>
-            {placementResults[0]?.placement_id === null ? (
+            {placementResults[0]?.placement_id === null &&
+            remainingTime === 0 ? (
               <ResultTRacker>
-                We are currently processing placement results. may be
-                application deadline has passed please check click apply button.
+                If you haven't applied by the set deadline, you won't be able to
+                view any results.
               </ResultTRacker>
             ) : (
               <PlacementList>

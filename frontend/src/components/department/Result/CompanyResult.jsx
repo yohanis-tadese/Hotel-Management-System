@@ -12,7 +12,7 @@ const PlacementResultsContainer = styled.div`
 const PlacementResultTable = styled.table`
   width: 100%;
   border-collapse: collapse;
-  border: 1px solid var(--color-grey-100);
+  border: 1px solid var(--color-grey-200);
 `;
 
 const TableRow = styled.tr`
@@ -24,19 +24,18 @@ const TableRow = styled.tr`
 const TableHeaderCell = styled.th`
   padding: 10px;
   text-align: left;
-  border-bottom: 1px solid #ddd;
   background-color: var(--color-grey-100);
 `;
 
 const TableCell = styled.td`
   padding: 10px;
-  border-bottom: 1px solid #ddd;
+  border: 1px solid var(--color-grey-200);
 `;
 
 const buttonStyle = {
   padding: "6px 25px",
   fontSize: "17px",
-  borderRadius: "30px",
+  borderRadius: "10px",
   margin: "10px",
   backgroundColor: "blue",
   color: "white",

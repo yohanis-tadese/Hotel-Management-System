@@ -3,6 +3,8 @@ import styled from "styled-components";
 import studentService from "../../../services/student.service";
 import { useAuth } from "../../../context/AuthContext";
 import avatar from "../../../../../backend/public/images/admin/default.jpg";
+import TimeCounter from "./TimeCounter";
+import { fetchRemainingTime } from "../../../utils/timeUtils";
 
 const ProfileContainer = styled.div`
   display: flex;
@@ -13,7 +15,7 @@ const ProfileContainer = styled.div`
   padding: 20px;
   background-color: var(--color-grey-50);
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 3px 4px rgba(0, 0, 0, 0.1);
 `;
 
 const ProfileHeader = styled.h2`
@@ -23,8 +25,8 @@ const ProfileHeader = styled.h2`
   width: 100%;
   border-radius: 3px;
   margin-top: -20px;
-  padding: 7px;
-  font-size: 30px;
+  padding: 5px;
+  font-size: 25px;
 `;
 
 const ProfileInfo = styled.div`
@@ -56,6 +58,7 @@ const UserProfile = () => {
   const [student, setStudent] = useState(null);
   const { userId, secondName } = useAuth();
   const [photoUrl, setPhotoUrl] = useState(null);
+  const [remainingTime, setRemainingTime] = useState(null);
 
   useEffect(() => {
     const fetchStudentPhoto = async () => {
@@ -118,12 +121,17 @@ const UserProfile = () => {
   }, [userId]);
 
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      setRemainingTime((prevRemainingTime) => {
-        return Math.max(0, prevRemainingTime - 1);
-      });
-    }, 1000);
+    const fetchRemainingTimeData = async () => {
+      const remainingSeconds = await fetchRemainingTime(1);
+      setRemainingTime(remainingSeconds);
+    };
 
+    fetchRemainingTimeData();
+
+    // Fetch remaining time every 30 seconds (30000 milliseconds)
+    const intervalId = setInterval(fetchRemainingTimeData, 1000);
+
+    // Clear interval on component unmount
     return () => clearInterval(intervalId);
   }, []);
 
@@ -132,8 +140,10 @@ const UserProfile = () => {
       <ProfileHeader
         style={{ position: "absolute", top: "90px", padding: "20px" }}
       >
-        Wellcome {secondName} to see detail about yourself.
+        Welcome {secondName} to see details about yourself.
       </ProfileHeader>
+
+      {remainingTime !== null && <TimeCounter remainingTime={remainingTime} />}
 
       {student && (
         <>

@@ -1,32 +1,94 @@
-import React, { useState, useEffect } from "react";
-import { companiesData } from "./company";
-import { studentsData } from "./student";
+import { useState, useEffect } from "react";
+import styled from "styled-components";
+import studentService from "../../../services/student.service";
 import placementService from "../../../services/placement.service";
 import criteriaService from "../../../services/criteria.service";
+import companyService from "../../../services/company.service";
+import ApplyStudentList from "../ApplyStudentList/ApplyStudentList";
+import ConfirmationDialog from "./ConfirmationDialog";
 
-// Import the frontend service
+const Button = styled.button`
+  padding: 10px 20px;
+  background-color: ${(props) =>
+    props.primary === "true" ? "#7dc400" : "red"};
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  margin-right: ${(props) => (props.marginRight ? "30px" : "0")};
+`;
 
-function Data() {
-  const [placementResults, setPlacementResults] = useState([]);
-
-  // Define weights as lowercase variables
+const StudentPlacement = () => {
+  const [companiesData, setCompaniesData] = useState([]);
   const [weightDisability, setWeightDisability] = useState(0);
   const [weightGender, setWeightGender] = useState(0);
   const [weightPreference, setWeightPreference] = useState(0);
   const [weightGrade, setWeightGrade] = useState(0);
+  const [placementGenerated, setPlacementGenerated] = useState(() => {
+    const storedPlacementStatus = localStorage.getItem("placementGenerated");
+    return storedPlacementStatus ? JSON.parse(storedPlacementStatus) : false;
+  });
+
+  const [showCompany, setShowCompany] = useState(() => {
+    const storedShowCompanyStatus = localStorage.getItem("showCompany");
+    return storedShowCompanyStatus
+      ? JSON.parse(storedShowCompanyStatus)
+      : false;
+  });
+
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
   useEffect(() => {
-    // Fetch criteria data and update weights when the component mounts
+    localStorage.setItem(
+      "placementGenerated",
+      JSON.stringify(placementGenerated)
+    );
+    localStorage.setItem("showCompany", JSON.stringify(showCompany));
+  }, [placementGenerated, showCompany]);
+
+  useEffect(() => {
     updateWeights();
+    const storedPlacementStatus = localStorage.getItem("placementGenerated");
+    if (storedPlacementStatus) {
+      setPlacementGenerated(JSON.parse(storedPlacementStatus));
+      setShowCompany(JSON.parse(storedPlacementStatus));
+    }
+
+    // Retrieve showCompany status from localStorage
+    const storedShowCompanyStatus = localStorage.getItem("showCompany");
+    if (storedShowCompanyStatus) {
+      setShowCompany(JSON.parse(storedShowCompanyStatus));
+    }
   }, []);
 
-  // Function to fetch criteria data and update weights
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response =
+          await companyService.getAllCompaniesWithoutPagination();
+
+        if (response.ok) {
+          const data = await response.json();
+
+          setCompaniesData(data.companies);
+        } else {
+          console.error("Failed to fetch data");
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   const updateWeights = async () => {
     try {
-      // Assuming criteriaId is available from props or context
-      const criteriaId = 1; // Example criteria ID
+      const criteriaId = 1;
       const criteriaData = await criteriaService.getCriteriaById(criteriaId);
-      // Update weights locally based on criteria data
       setWeightDisability(criteriaData.data.weight_disability);
       setWeightGender(criteriaData.data.weight_gender);
       setWeightPreference(criteriaData.data.weight_preference);
@@ -53,103 +115,128 @@ function Data() {
     return rank;
   };
 
-  // Function to assign students to companies using Stable Roommates Problem algorithm
-  function assignStudentsToCompanies() {
-    // Reset assignedStudents object
-    const assignedStudents = {};
-    const studentPreferences = new Map();
-    const assignedStudentSet = new Set();
-
-    studentsData.forEach((student) => {
-      student.preferences.forEach((pref) => {
-        if (studentPreferences.has(pref)) {
-          studentPreferences.get(pref).push(student.student_id);
-        } else {
-          studentPreferences.set(pref, [student.student_id]);
-        }
-      });
-    });
-
-    // Iterate over each company
-    companiesData.forEach((company) => {
-      assignedStudents[company.company_name] = []; // Initialize company's assigned students array
-      const companyPreferences = studentsData.map((student) => ({
-        student_id: student.student_id,
-        rank: calculateRank(student, company),
-      }));
-
-      // Sort the preference list based on ranks
-      companyPreferences.sort((a, b) => b.rank - a.rank);
-
-      companyPreferences.forEach((pref) => {
-        const studentId = pref.student_id;
-        const studentPref = studentPreferences.get(company.company_id);
-        const studentIndex = studentPref ? studentPref.indexOf(studentId) : -1;
-        if (
-          studentIndex !== -1 &&
-          assignedStudents[company.company_name].length <
-            company.accepted_students_limit &&
-          !assignedStudentSet.has(studentId)
-        ) {
-          assignedStudents[company.company_name].push({
-            student_id: studentId,
-            company_id: company.company_id,
-          });
-          assignedStudentSet.add(studentId); // Mark student as assigned
-        }
-      });
-    });
-
-    console.log(assignedStudents);
-
-    // Flatten the assigned students object into an array
-    const flattenedResults = Object.values(assignedStudents).reduce(
-      (acc, val) => acc.concat(val),
-      []
-    );
-
-    // Send placement results to the backend
+  async function assignStudentsToCompanies() {
     try {
-      const data = placementService.sendPlacementResults(flattenedResults);
-      console.log("Placement results stored successfully", data);
-      setPlacementResults(flattenedResults); // Update state with placement results
+      const assignedStudents = {};
+      const studentPreferences = new Map();
+      const assignedStudentSet = new Set();
+
+      const studentsResponse = await studentService.getAllApplyStudents();
+      if (!studentsResponse || !studentsResponse.status) {
+        console.error("Failed to fetch student data");
+        return;
+      }
+
+      const studentsData = studentsResponse.students;
+
+      studentsData.forEach((student) => {
+        const preferences = student.preferences.split(",").map(Number); // Parse preferences into an array of numbers
+        student.preferences = preferences; // Update student object with parsed preferences array
+
+        preferences.forEach((pref) => {
+          if (studentPreferences.has(pref)) {
+            studentPreferences.get(pref).push(student.student_id);
+          } else {
+            studentPreferences.set(pref, [student.student_id]);
+          }
+        });
+      });
+
+      await Promise.all(
+        companiesData.map(async (company) => {
+          assignedStudents[company.company_name] = [];
+          const companyPreferences = studentsData.map((student) => ({
+            student_id: student.student_id,
+            rank: calculateRank(student, company),
+          }));
+
+          companyPreferences.sort((a, b) => b.rank - a.rank);
+
+          companyPreferences.forEach((pref) => {
+            const studentId = pref.student_id;
+            const studentPref = studentPreferences.get(company.company_id);
+            const studentIndex = studentPref
+              ? studentPref.indexOf(studentId)
+              : -1;
+            if (
+              studentIndex !== -1 &&
+              assignedStudents[company.company_name].length <
+                company.accepted_student_limit &&
+              !assignedStudentSet.has(studentId)
+            ) {
+              assignedStudents[company.company_name].push({
+                student_id: studentId,
+                company_id: company.company_id,
+              });
+              assignedStudentSet.add(studentId);
+            }
+          });
+        })
+      );
+
+      const flattenedResults = Object.values(assignedStudents).reduce(
+        (acc, val) => acc.concat(val),
+        []
+      );
+
+      await placementService.sendPlacementResults(flattenedResults);
     } catch (error) {
-      console.error("Error storing placement results:", error);
+      console.error("Error assigning students:", error);
     }
   }
 
+  const handleResetPlacement = async () => {
+    try {
+      const response = await studentService.deleteAllPlacementResults();
+      if (response) {
+        console.log("Placement results reset successfully.");
+        localStorage.setItem("placementGenerated", "false");
+        setPlacementGenerated(false);
+        setShowCompany(false);
+      } else {
+        console.error("Failed to reset placement results");
+      }
+    } catch (error) {
+      console.error("Error resetting placement results:", error);
+    }
+    setShowConfirmation(false);
+  };
+
   return (
     <div>
-      <button
-        style={{
-          padding: "10px 20px",
-          backgroundColor: "#007bff",
-          color: "#fff",
-          border: "none",
-          borderRadius: "5px",
-          cursor: "pointer",
-          fontSize: "16px",
-          fontWeight: "bold",
-          marginBottom: "20px",
-        }}
-        onClick={assignStudentsToCompanies}
-      >
-        Place Students
-      </button>
-      <div>
-        <h3>Assigned Students:</h3>
+      {!placementGenerated ? (
+        <Button
+          primary={placementGenerated ? "false" : "true"}
+          onClick={() => {
+            console.log("Generating placement...");
+            assignStudentsToCompanies();
+            setPlacementGenerated(true);
+            setShowCompany(true);
+          }}
+        >
+          Generate placement
+        </Button>
+      ) : (
+        <>
+          <Button primary="false" onClick={() => setShowConfirmation(true)}>
+            Reset placement
+          </Button>
 
-        {placementResults.map((result, index) => (
-          <div key={index}>
-            <h1>{result.company_id}</h1>
-            <ul>
-              <li key={result.student_id}>{result.student_id}</li>
-            </ul>
-          </div>
-        ))}
-      </div>
+          {showConfirmation && (
+            <ConfirmationDialog
+              message="Are you sure you want to reset placement?."
+              onConfirm={handleResetPlacement}
+              onCancel={() => setShowConfirmation(false)}
+            />
+          )}
+        </>
+      )}
+      <ApplyStudentList
+        showCompany={showCompany}
+        companiesData={companiesData}
+      />
     </div>
   );
-}
+};
 
-export default Data;
+export default StudentPlacement;

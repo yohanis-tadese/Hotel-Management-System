@@ -2,10 +2,12 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import studentService from "../../../services/student.service";
 import PrintButton from "./../../../ui/PrintButton";
+import Spinner from "../../../ui/Spinner";
 
 const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
+  border: 1px solid #7dc400;
 `;
 
 const TableHead = styled.thead`
@@ -15,7 +17,7 @@ const TableHead = styled.thead`
 const TableHeader = styled.th`
   padding: 12px;
   text-align: left;
-  border-bottom: 2px solid #ddd;
+  border: 1px solid var(--color-grey-400);
 `;
 
 const TableRow = styled.tr`
@@ -26,11 +28,13 @@ const TableRow = styled.tr`
 
 const TableCell = styled.td`
   padding: 12px;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid var(--color-grey-200);
+  border: 1px solid var(--color-grey-200);
 `;
 
 const Report = () => {
   const [showCompany, setShowCompany] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
 
   useEffect(() => {

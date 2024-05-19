@@ -6,6 +6,7 @@ import studentService from "../../../services/student.service";
 const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
+  border: 2px solid var(--color-grey-200);
 `;
 
 const TableHead = styled.thead`
@@ -15,7 +16,7 @@ const TableHead = styled.thead`
 const TableHeader = styled.th`
   padding: 12px;
   text-align: left;
-  border-bottom: 2px solid #ddd;
+  border: 1px solid var(--color-grey-400);
 `;
 
 const TableRow = styled.tr`
@@ -26,7 +27,7 @@ const TableRow = styled.tr`
 
 const TableCell = styled.td`
   padding: 12px;
-  border-bottom: 1px solid #ddd;
+  border: 1px solid var(--color-grey-200);
 `;
 
 const ApplyStudentList = ({ showCompany }) => {
@@ -69,8 +70,8 @@ const ApplyStudentList = ({ showCompany }) => {
         style={{
           marginBottom: "10px",
           padding: "10px",
-          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-          borderRadius: "10px",
+          boxShadow: "-0.1px -0.1px 1px 1px rgba(0, 0, 0, 0.06)",
+          borderRadius: "5px",
         }}
       >
         {showCompany
@@ -108,7 +109,6 @@ const ApplyStudentList = ({ showCompany }) => {
                     textTransform: "uppercase",
                     fontWeight: "700",
                     margin: "-10px",
-                    background: "#FFFAA9",
                   }}
                 >
                   {item.company_name}

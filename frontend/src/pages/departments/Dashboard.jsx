@@ -16,6 +16,7 @@ import Spinner from "../../ui/Spinner";
 import placementService from "../../services/placement.service";
 import depResultService from "../../services/dept.results.service";
 import Boxs from "../../ui/Boxes";
+import { fetchRemainingTime } from "../../utils/timeUtils";
 
 const StyledLink = styled(Link)`
   position: absolute;
@@ -33,9 +34,9 @@ const IconContainer = styled.div`
 `;
 
 const PieChartContainer = styled.div`
-  margin-top: 2rem;
-  width: 300px;
-  margin-bottom: 30px;
+  /* margin-top: 2rem;
+  /* width: 300px; */
+  /* margin-bottom: 30px;  */
 `;
 
 function Dashboard() {
@@ -45,17 +46,15 @@ function Dashboard() {
   const [numEvaluatedResults, setNumEvaluatedResults] = useState(0); // New state for evaluated results count
   const [studentData, setStudentData] = useState([]);
   const [loadingStudents, setLoadingStudents] = useState(true);
-
   const { userId } = useAuth();
 
-  const [showCompany, setShowCompany] = useState(false);
+  const [remainingTime, setRemainingTime] = useState(null);
 
   useEffect(() => {
-    const storedShowCompany = localStorage.getItem("showCompany");
-    if (storedShowCompany) {
-      setShowCompany(JSON.parse(storedShowCompany));
-    }
-  }, [showCompany]);
+    fetchRemainingTime(1).then((remainingTime) => {
+      setRemainingTime(remainingTime);
+    });
+  }, []);
 
   useEffect(() => {
     // Fetch real data for the dashboard
@@ -184,28 +183,32 @@ function Dashboard() {
           </Box>
         </Boxs>
 
-        <Box>
-          <Heading as="h2">Assigned Student Lists</Heading>
-          <IconContainer>
-            <FaUserGraduate size={24} color="#0984e3" />
-          </IconContainer>
-          {loadingStudents ? (
-            <Spinner />
-          ) : (
-            <PieChartContainer>
-              <ReactApexChart
-                options={pieOptions}
-                series={departmentDistributionData.series}
-                type="pie"
-                width="380"
-              />
-            </PieChartContainer>
-          )}
+        {remainingTime <= 0 ? (
+          <Box>
+            <Heading as="h2">Assigned Student Lists</Heading>
+            <IconContainer>
+              <FaUserGraduate size={24} color="#0984e3" />
+            </IconContainer>
+            {loadingStudents ? (
+              <Spinner />
+            ) : (
+              <PieChartContainer>
+                <ReactApexChart
+                  options={pieOptions}
+                  series={departmentDistributionData.series}
+                  type="pie"
+                  width="380"
+                />
+              </PieChartContainer>
+            )}
 
-          <StyledLink to="/department/student-placement-results">
-            See Detail
-          </StyledLink>
-        </Box>
+            <StyledLink to="/department/student-placement-results">
+              See Detail
+            </StyledLink>
+          </Box>
+        ) : (
+          ""
+        )}
       </DashboardContainer>
     </>
   );

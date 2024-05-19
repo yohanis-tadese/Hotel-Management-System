@@ -34,7 +34,7 @@ function UpdatePassword() {
   const validateForm = () => {
     const errors = {};
     if (formData.newPassword.length < 6) {
-      errors.password = "Password must be at least 6 characters long";
+      errors.newPassword = "Password must be at least 6 characters long";
     }
     if (formData.newPassword !== formData.confirmPassword) {
       errors.confirmPassword = "Passwords do not match";

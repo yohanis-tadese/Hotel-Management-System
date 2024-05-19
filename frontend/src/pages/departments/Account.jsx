@@ -1,15 +1,13 @@
-import UpdatePassword from "../../components/company/UpdateProfile/UpdatePassword";
-import UpdateProfile from "../../components/company/UpdateProfile/UpdateProfile";
+import UpdatePassword from "../../components/department/UpdateProfile/UpdatePassword";
+import UpdateProfile from "../../components/department/UpdateProfile/UpdateProfile";
 import Heading from "../../ui/Heading";
 import Row from "../../ui/Row";
 
 function CompanyAccount() {
   return (
     <>
-      <Heading as="h1">Update your Account</Heading>
-
       <Row>
-        <Heading as="h3">Update user data</Heading>
+        <Heading as="h3">Update your profile</Heading>
         <UpdateProfile />
       </Row>
 

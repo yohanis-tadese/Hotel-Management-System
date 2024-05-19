@@ -16,9 +16,9 @@ router.get(
 );
 
 router.patch(
-  "/api/department/profile/:id",
-  departmentController.updateDepartmentProfile,
-  departmentController.updateDepartmentPhoto
+  "/api/department/profile/:departmentId",
+  departmentController.updateDepartmentPhoto,
+  departmentController.updateDepartmentProfile
 );
 
 router.patch(

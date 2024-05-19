@@ -102,6 +102,37 @@ const getDepartmentIds = async () => {
   }
 };
 
+const updateDepartmentProfile = async (departmentId, DepartmentData) => {
+  const requestOptions = {
+    method: "PATCH",
+    body: DepartmentData,
+  };
+
+  const response = await fetch(
+    `${api_url}/api/department/profile/${departmentId}`,
+    requestOptions
+  );
+  return response;
+};
+
+const changePassword = async (
+  DepartmentId,
+  oldPassword,
+  newPassword,
+  confirmPassword
+) => {
+  const requestOptions = {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ oldPassword, newPassword, confirmPassword }),
+  };
+  const response = await fetch(
+    `${api_url}/api/department/password/${DepartmentId}`,
+    requestOptions
+  );
+  return response;
+};
+
 // Export all the functions
 const departmentService = {
   createDepartment,
@@ -110,6 +141,8 @@ const departmentService = {
   updateDepartment,
   deleteDepartment,
   getDepartmentIds,
+  updateDepartmentProfile,
+  changePassword,
 };
 
 export default departmentService;

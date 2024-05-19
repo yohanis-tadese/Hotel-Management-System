@@ -11,6 +11,7 @@ router.get("/api/companies/page", companyController.getAllCompanies);
 router.get("/api/company/:id/photo", companyController.getCompanyPhoto);
 
 router.patch("/api/company/:id", companyController.updateCompany);
+
 router.patch(
   "/api/company/profile/:id",
   companyController.updateCompanyPhoto,

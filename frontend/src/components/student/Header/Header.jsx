@@ -108,7 +108,7 @@ const Header = () => {
         const response = await studentService.getApplyStudentById(userId);
 
         if (
-          response.applyStudents[0].student_id !== undefined &&
+          // response.applyStudents[0].student_id !== undefined &&
           response.applyStudents[0].student_id !== null
         ) {
           setHasFilledForm(true);

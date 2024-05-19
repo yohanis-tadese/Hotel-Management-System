@@ -9,7 +9,8 @@ import PrintButton from "../../../ui/PrintButton";
 const PlacementResultTable = styled.table`
   width: 100%;
   border-collapse: collapse;
-  border: 1px solid var(--color-grey-100);
+  border: 1px solid var(--color-grey-200);
+  position: relative;
 `;
 
 // Styled component for table row
@@ -23,15 +24,22 @@ const TableRow = styled.tr`
 const TableHeaderCell = styled.th`
   padding: 10px;
   text-align: center;
-  border-bottom: 1px solid #ddd;
   background-color: var(--color-grey-100);
 `;
 
 // Styled component for table cell
 const TableCell = styled.td`
-  padding: 10px;
+  padding: 12px;
   text-align: center;
-  border-bottom: 1px solid #ddd;
+  border: 1px solid var(--color-grey-200);
+`;
+
+const PrintButtonWrapper = styled.div`
+  position: absolute;
+  margin: auto;
+  align-items: center;
+  right: 15px;
+  top: 106%;
 `;
 
 const PlacementResult = () => {
@@ -60,10 +68,6 @@ const PlacementResult = () => {
     <>
       <Heading as="h1">Placement Results</Heading>
 
-      <div>
-        <PrintButton printableElementId="printableTable" />
-      </div>
-
       <PlacementResultTable id="printableTable">
         <thead>
           <TableRow>
@@ -89,6 +93,10 @@ const PlacementResult = () => {
             </TableRow>
           ))}
         </tbody>
+
+        <PrintButtonWrapper>
+          <PrintButton printableElementId="printableTable" />
+        </PrintButtonWrapper>
       </PlacementResultTable>
     </>
   );

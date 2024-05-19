@@ -8,7 +8,7 @@ import { useAuth } from "./../../../context/AuthContext";
 const PlacementResultTable = styled.table`
   width: 100%;
   border-collapse: collapse;
-  border: 1px solid var(--color-grey-100);
+  border: 1px solid var(--color-grey-200);
 `;
 
 // Styled component for table row
@@ -22,15 +22,13 @@ const TableRow = styled.tr`
 const TableHeaderCell = styled.th`
   padding: 10px;
 
-  border-bottom: 1px solid #ddd;
   background-color: var(--color-grey-100);
 `;
 
 // Styled component for table cell
 const TableCell = styled.td`
-  padding: 10px;
-
-  border-bottom: 1px solid #ddd;
+  padding: 14px;
+  border: 1px solid var(--color-grey-200);
 `;
 
 const TableCellStatus = styled.td`

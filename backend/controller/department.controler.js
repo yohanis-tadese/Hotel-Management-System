@@ -1,6 +1,6 @@
 // Import necessary dependencies
-const departmentService = require("../service/department.service");
 const multer = require("multer");
+const departmentService = require("../service/department.service");
 
 const multerStorage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -144,8 +144,10 @@ async function updateDepartment(req, res, next) {
 
 async function updateDepartmentProfile(req, res, next) {
   try {
-    // Extract admin ID from request parameters
-    const departmentId = req.params.id;
+    // Extract department ID from request parameters
+    const departmentId = req.params.departmentId;
+
+    console.log("ggggg", departmentId);
 
     // Check if a file was uploaded
     let photoFilename = null;
@@ -153,15 +155,16 @@ async function updateDepartmentProfile(req, res, next) {
       photoFilename = req.file.filename;
     }
 
-    // Call the service to update the admin
+    // Call the service to update the department profile
     const success = await departmentService.updateDepartmentProfile(
       departmentId,
       req.body,
       photoFilename
     );
 
-    // Check if the admin was successfully updated
+    // Check if the department was successfully updated
     if (success) {
+      // Retrieve the updated department details
       const department = await departmentService.getDepartment(departmentId);
       return res.status(200).json({
         status: true,
@@ -243,14 +246,6 @@ const changePassword = async (req, res, next) => {
   try {
     const departmentId = req.params.id;
     const { oldPassword, newPassword, confirmPassword } = req.body;
-
-    // Check if the new password matches the confirm password
-    if (newPassword !== confirmPassword) {
-      return res.status(400).json({
-        status: "fail",
-        message: "New password and confirm password do not match.",
-      });
-    }
 
     // Call the service method to change the password
     const response = await departmentService.changePassword(

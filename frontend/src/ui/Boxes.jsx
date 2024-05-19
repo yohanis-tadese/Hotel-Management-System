@@ -1,7 +1,5 @@
 import styled from "styled-components";
 
-const Boxs = styled.div`
-  padding: 10px;
-`;
+const Boxs = styled.div``;
 
 export default Boxs;

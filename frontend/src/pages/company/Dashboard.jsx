@@ -11,6 +11,7 @@ import ReactApexChart from "react-apexcharts";
 import Boxs from "../../ui/Boxes";
 import Box from "../../ui/Box";
 import DashboardContainer from "../../ui/DashboardContainer";
+import { fetchRemainingTime } from "../../utils/timeUtils";
 
 const IconContainer = styled.div`
   position: absolute;
@@ -27,11 +28,7 @@ const StyledLink = styled(Link)`
   font-weight: bold;
 `;
 
-const PieChartContainer = styled.div`
-  margin-top: 2rem;
-  width: 300px;
-  margin-bottom: 40px;
-`;
+const PieChartContainer = styled.div``;
 
 function Dashboard() {
   const [numStudents, setNumStudents] = useState(0);
@@ -40,14 +37,13 @@ function Dashboard() {
   const [loadingStudents, setLoadingStudents] = useState(true);
   const { userId } = useAuth();
 
-  const [showCompany, setShowCompany] = useState(false);
+  const [remainingTime, setRemainingTime] = useState(null);
 
   useEffect(() => {
-    const storedShowCompany = localStorage.getItem("showCompany");
-    if (storedShowCompany) {
-      setShowCompany(JSON.parse(storedShowCompany));
-    }
-  }, [showCompany]);
+    fetchRemainingTime(1).then((remainingTime) => {
+      setRemainingTime(remainingTime);
+    });
+  }, []);
 
   useEffect(() => {
     async function fetchData() {
@@ -137,7 +133,7 @@ function Dashboard() {
             )}
           </Box>
         </Boxs>
-        {showCompany && (
+        {remainingTime <= 0 ? (
           <Box>
             <Heading as="h2">Accepted Students Per Departments</Heading>
             <IconContainer>
@@ -158,6 +154,8 @@ function Dashboard() {
 
             <StyledLink to="/company/student"> See Detail</StyledLink>
           </Box>
+        ) : (
+          ""
         )}
       </DashboardContainer>
     </>

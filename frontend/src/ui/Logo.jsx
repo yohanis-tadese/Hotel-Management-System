@@ -4,11 +4,13 @@ import { styled } from "styled-components";
 
 const StyledLogo = styled.div`
   text-align: center;
-  border-bottom: 0.5px solid #7dc400;
+  border-bottom: 1px solid var(--color-grey-300);
+  margin-left: -10px;
+  margin-right: -7px;
 `;
 
 const Img = styled.img`
-  height: 8.6rem;
+  height: 5.4rem;
   width: auto;
 `;
 

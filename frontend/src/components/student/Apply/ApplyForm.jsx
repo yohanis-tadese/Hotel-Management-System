@@ -9,6 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Header from "../Header/Header";
 import { useNavigate } from "react-router-dom";
 import placementService from "../../../services/placement.service";
+import { fetchRemainingTime } from "../../../utils/timeUtils";
 
 const CriteriaStyle = styled.div`
   background-color: var(--color-grey-200);
@@ -106,15 +107,14 @@ const StudentPlacementForm = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const { userId, secondName } = useAuth();
   const navigate = useNavigate();
-
-  const [showCompany, setShowCompany] = useState(false);
+  const [remainingTime, setRemainingTime] = useState(null);
 
   useEffect(() => {
-    const storedShowCompany = localStorage.getItem("showCompany");
-    if (storedShowCompany) {
-      setShowCompany(JSON.parse(storedShowCompany));
-    }
-  }, [showCompany]);
+    // Fetch remaining time separately
+    fetchRemainingTime(1).then((remainingTime) => {
+      setRemainingTime(remainingTime);
+    });
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -153,10 +153,29 @@ const StudentPlacementForm = () => {
     const selectedCompanyId = e.target.value;
 
     // Check if the selected company is already selected in other dropdowns
-    studentPreferences.some(
+    const isCompanySelected = studentPreferences.some(
       (preference, index) =>
         index !== preferenceIndex && preference === selectedCompanyId
     );
+
+    if (isCompanySelected) {
+      // Find the index of the preference where the company is already selected
+      const duplicatePreferenceIndex = studentPreferences.findIndex(
+        (preference, index) =>
+          index !== preferenceIndex && preference === selectedCompanyId
+      );
+
+      // If the selected company is already selected in other dropdowns, display an error message
+      toast.error(
+        `Sorry, this company is already selected in preference ${
+          duplicatePreferenceIndex + 1
+        }`,
+        {
+          autoClose: 1500,
+        }
+      );
+      return;
+    }
 
     // Update the studentPreferences array to store only the selected preference for the current student
     const updatedStudentPreferences = studentPreferences.map(
@@ -172,13 +191,9 @@ const StudentPlacementForm = () => {
     // Disable the selected company in other dropdowns
     const updatedCompanies = companies.map((company, index) => {
       if (index !== preferenceIndex) {
-        // Check if the selected company is already selected in other dropdowns
-        const isCompanySelected = updatedStudentPreferences.includes(
-          String(company.company_id)
-        );
         return {
           ...company,
-          disabled: isCompanySelected ? [true] : [false],
+          disabled: company.company_id === selectedCompanyId ? [true] : [false],
         };
       }
       return company;
@@ -260,7 +275,7 @@ const StudentPlacementForm = () => {
         <Header />
 
         <ResultTRacker>
-          {showCompany ? (
+          {remainingTime === 0 ? (
             <div style={{ padding: "17px" }}>
               <p>
                 Sorry, the application deadline has passed. Please check back
@@ -345,6 +360,7 @@ const StudentPlacementForm = () => {
                 className="mt-3"
                 disabled={isSubmitted}
                 style={{ background: "#7DC400" }}
+                onClick={handleSubmit}
               >
                 Submit
               </Button>

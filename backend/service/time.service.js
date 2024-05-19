@@ -1,22 +1,52 @@
-const { query } = require("../../../db/connection");
+const { query } = require("../config/db.config");
 
-// Service methods
-exports.createTime = async (start_time, end_time) => {
-  const sql = "INSERT INTO apptlytime (start_time, end_time) VALUES (?, ?)";
-  const result = await query(sql, [start_time, end_time]);
-  const newTimeId = result.insertId;
-  return { time_id: newTimeId, start_time, end_time };
-};
+// Function to fetch time entry from the database by ID
+async function getTimeById(timeId) {
+  try {
+    // Construct the SQL query to select time entry by ID
+    const selectTimeSql = `
+      SELECT *
+      FROM apptlytime
+      WHERE time_id = ?
+    `;
 
-exports.getTimeById = async (id) => {
-  const sql = "SELECT * FROM apptlytime WHERE time_id = ?";
-  const result = await query(sql, [id]);
-  return result[0];
-};
+    // Execute the SQL query to fetch the time entry by ID
+    const time = await query(selectTimeSql, [timeId]);
 
-exports.updateTime = async (id, start_time, end_time) => {
-  const sql =
-    "UPDATE apptlytime SET start_time = ?, end_time = ? WHERE time_id = ?";
-  await query(sql, [start_time, end_time, id]);
-  return { time_id: id, start_time, end_time };
+    // Return the fetched time entry data
+    return time[0]; // Assuming the result is an array, return the first element
+  } catch (error) {
+    // Throw an error if something goes wrong
+    console.error("Error fetching time entry by ID:", error.message);
+    throw new Error("Failed to fetch time entry by ID");
+  }
+}
+
+// Function to update time entry in the database
+async function updateTime(timeId, startTime, endTime) {
+  try {
+    // Construct the SQL query to update the time entry in the table
+    const updateTimeSql = `
+      UPDATE apptlytime
+      SET
+        start_time = ?,
+        end_time = ?
+      WHERE time_id = ?
+    `;
+
+    // Execute the SQL query to update the time entry
+    const result = await query(updateTimeSql, [startTime, endTime, timeId]);
+
+    // Check if any rows were affected (time entry updated successfully)
+    return result.affectedRows > 0;
+  } catch (error) {
+    // Throw an error if something goes wrong
+    console.error("Error updating time entry:", error.message);
+    throw new Error("Failed to update time entry");
+  }
+}
+
+module.exports = {
+  getTimeById,
+  updateTime,
 };

@@ -81,14 +81,14 @@ const updateCompany = async (companyId, formData) => {
   }
 };
 
-const updateCompanyProfile = async (adminId, companyData) => {
+const updateCompanyProfile = async (companyId, companyData) => {
   const requestOptions = {
     method: "PATCH",
     body: companyData,
   };
 
   const response = await fetch(
-    `${api_url}/api/company/profile/${adminId}`,
+    `${api_url}/api/company/profile/${companyId}`,
     requestOptions
   );
   return response;

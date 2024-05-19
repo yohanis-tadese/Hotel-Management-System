@@ -165,6 +165,11 @@ async function updateDepartmentProfile(
     const { department_name, phone_number, contact_email, office_location } =
       departmentData;
 
+    // Check if department_name exists before accessing its properties
+    if (!department_name) {
+      throw new Error("Department name is required");
+    }
+
     // Check if a photo filename is provided and update the department accordingly
     if (photoFilename) {
       departmentData.photo = photoFilename;
@@ -205,16 +210,14 @@ async function updateDepartmentProfile(
 
 async function getDepartmentPhoto(departmentId) {
   try {
-    const sql = `
-      SELECT photo_filename 
-      FROM departments
-      WHERE department_id = ?
-    `;
-    const [department] = await query(sql, [departmentId]);
+    // Fetch department data by ID
+    const department = await getDepartment(departmentId);
 
-    return department ? department.photo_filename : null;
+    // Return department's photo filename
+    return department.photo;
   } catch (error) {
-    throw new Error(`Error getting department photo: ${error.message}`);
+    console.error("Error getting department photo:", error);
+    throw new Error("Failed to get department photo");
   }
 }
 

@@ -11,41 +11,14 @@ import { toast } from "react-toastify";
 import Pagination from "../../../ui/Pagination";
 import TableType from "../../../ui/TabelType";
 import { useSearchParams } from "react-router-dom";
-
-const Table = styled.table`
-  width: 100%;
-  border-collapse: collapse;
-`;
-
-const TableHead = styled.thead`
-  background-color: var(--color-grey-200);
-`;
-
-const TableHeader = styled.th`
-  padding: 12px;
-  text-align: left;
-  border-bottom: 2px solid #ddd;
-`;
-
-const TableRow = styled.tr`
-  &:nth-child(even) {
-    background-color: var(--color-grey-100);
-  }
-`;
-
-const TableCell = styled.td`
-  padding: 12px;
-  border-bottom: 1px solid #ddd;
-`;
-
-const SearchInput = styled.input`
-  margin-bottom: 10px;
-  margin-left: 1px;
-  padding: 7px;
-  border: 1px solid #ccc;
-  background: var(--color-grey-0);
-  font-size: 1.4rem;
-`;
+import SearchInput from "../../../ui/SearchInput";
+import {
+  Table,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../../../ui/Table";
 
 const ActionsWrapper = styled.div`
   display: flex;

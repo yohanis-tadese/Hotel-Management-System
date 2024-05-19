@@ -1,5 +1,8 @@
+import { useState, useEffect } from "react";
 import styled from "styled-components";
-import avatar from "../../../public/yohanis.gif";
+import { useAuth } from "../../context/AuthContext";
+import defaultAvatar from "../../../../backend/public/images/department/default.jpg";
+import departmentService from "./../../services/department.service";
 
 const StyledUserAvatar = styled.div`
   display: flex;
@@ -12,8 +15,8 @@ const StyledUserAvatar = styled.div`
 
 const Avatar = styled.img`
   display: block;
-  width: 4rem;
-  width: 3.6rem;
+  width: 4rem; /* Set your desired width */
+  height: 4rem; /* Set your desired height */
   aspect-ratio: 1;
   object-fit: cover;
   object-position: center;
@@ -22,10 +25,60 @@ const Avatar = styled.img`
 `;
 
 function UserAvatar() {
+  const [photoUrl, setPhotoUrl] = useState(null);
+  const { userId } = useAuth();
+
+  const fetchDepartmentPhoto = async () => {
+    try {
+      // Fetch department data including photo URL
+      const response = await departmentService.getDepartments(userId);
+
+      if (response.ok) {
+        const department = await response.json();
+
+        if (department.department.photo) {
+          const adjustedPhotoUrl = department.department.photo.replace(
+            "/public",
+            ""
+          );
+
+          setPhotoUrl(adjustedPhotoUrl);
+        } else {
+          // If photo URL is not available, set default photo URL
+          setPhotoUrl(defaultAvatar);
+        }
+      } else {
+        throw new Error("Failed to fetch department data");
+      }
+    } catch (error) {
+      console.error("Error fetching department data:", error);
+      // If error occurs, set default photo URL
+      setPhotoUrl(defaultAvatar);
+    }
+  };
+
+  useEffect(() => {
+    fetchDepartmentPhoto();
+
+    // Fetch student photo every 30 seconds (30000 milliseconds)
+    const intervalId = setInterval(fetchDepartmentPhoto, 3000);
+
+    // Clear interval on component unmount
+    return () => clearInterval(intervalId);
+  }, [userId]);
+
   return (
-    <StyledUserAvatar>
-      <Avatar src={avatar || "default-user.jpg"} alt={`Avatar of yohanis`} />
-    </StyledUserAvatar>
+    <>
+      <StyledUserAvatar>
+        <Avatar
+          src={
+            `http://localhost:8080/images/department/` + photoUrl ||
+            defaultAvatar
+          }
+          alt="department Avatar"
+        />
+      </StyledUserAvatar>
+    </>
   );
 }
 

@@ -20,23 +20,25 @@ const PrintButton = ({ printableElementId }) => {
     }
   };
 
-  return <Button onClick={handlePrint}>Print</Button>;
+  return (
+    <Button style={{ padding: "11px 32px " }} onClick={handlePrint}>
+      Print
+    </Button>
+  );
 };
 
 export default PrintButton;
 
 const printStyles = `
-  /* Hide the button when printing */
+ 
   button {
     display: none;
   }
 
-  /* Set the font size for headings */
   h1, h2, h3 {
     font-size: 18px;
   }
 
-  /* Adjust table styles for better readability */
   table {
     width: 100%;
     border-collapse: collapse;
@@ -56,14 +58,12 @@ const printStyles = `
     background-color: #f2f2f2;
   }
 
-  /* Adjust margins for better layout */
   body {
     margin: 0;
     padding: 20px;
   }
 
-  /* Adjust page layout */
-  @page {
+   @page {
     size: A4;
     margin: 20mm 20mm 20mm 20mm;
   }
